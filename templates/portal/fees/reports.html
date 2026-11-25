@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Fee Reports{% endblock %}
+{% block page_title %}Financial Summary & Defaulters{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico blue"><i class="fa-solid fa-file-invoice"></i></div><div><div class="val">₹{{ total_expected|floatformat:0|intcomma }}</div><div class="lbl">Expected</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico green"><i class="fa-solid fa-circle-check"></i></div><div><div class="val">₹{{ total_collected|floatformat:0|intcomma }}</div><div class="lbl">Collected</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="val">{{ defaulters|length }}</div><div class="lbl">Defaulters</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico amber"><i class="fa-solid fa-hand-holding-heart"></i></div><div><div class="val">₹{{ heads.c|default:0|floatformat:0|intcomma }}</div><div class="lbl">Concessions Given</div></div></div></div></div>
+</div>
+<div class="row g-3 mb-3">
+    <div class="col-lg-8"><div class="card-p"><div class="card-head"><h2>Collected vs Expected by Program</h2></div><div class="chart-box"><canvas id="cCourse"></canvas></div></div></div>
+    <div class="col-lg-4"><div class="card-p"><div class="card-head"><h2>By Payment Mode</h2></div><div class="chart-box"><canvas id="cMode"></canvas></div></div></div>
+    <div class="col-lg-4"><div class="card-p"><div class="card-head"><h2>Fee Heads (billed)</h2></div>
+        <table class="table-p"><tbody><tr><td>Tuition</td><td class="text-end">₹{{ heads.t|default:0|intcomma }}</td></tr><tr><td>Examination</td><td class="text-end">₹{{ heads.e|default:0|intcomma }}</td></tr><tr><td>Other</td><td class="text-end">₹{{ heads.o|default:0|intcomma }}</td></tr></tbody></table>
+    </div></div>
+</div>
+<div class="card-p">
+    <div class="card-head"><h2>Defaulter Report (overdue)</h2>
+        <div class="d-flex gap-2">{% if can_edit and defaulters %}<form method="post">{% csrf_token %}<button name="remind" value="1" class="btn-theme" data-confirm="Send overdue reminders to {{ defaulters|length }} students and their parents?"><i class="fa-solid fa-bell"></i> Send Reminders</button></form>{% endif %}<button class="btn-ghost no-print" onclick="window.print()"><i class="fa-solid fa-print"></i></button></div>
+    </div>
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr><th>Roll No.</th><th>Student</th><th>Program</th><th>Invoice</th><th>Due Date</th><th>Days Overdue</th><th>Balance</th><th>Parent</th></tr></thead>
+        <tbody>{% for i in defaulters %}<tr><td>{{ i.student.roll_no }}</td><td>{{ i.student.user.display_name }}</td><td>{{ i.student.course.code }}</td><td><a href="{% url 'cms:invoice_detail' i.pk %}">{{ i.invoice_no }}</a></td><td>{{ i.due_date|date:"d M Y" }}</td><td>{{ i.due_date|timesince }}</td><td class="text-danger fw-bold">₹{{ i.balance|intcomma }}</td><td>{{ i.student.parent.display_name|default:"—" }}</td></tr>{% empty %}<tr><td colspan="8" class="empty">No defaulters 🎉</td></tr>{% endfor %}</tbody>
+    </table></div>
+</div>
+{% endblock %}
+{% block extra_js %}<script>const D = {{ chart|safe }};
+drawChart("cCourse", "bar", D.labels, [{label: "Expected", data: D.expected, backgroundColor: "#2563eb"}, {label: "Collected", data: D.collected, backgroundColor: "#1f9d55"}]);
+drawChart("cMode", "doughnut", D.methods.labels, [{label: "₹", data: D.methods.data}]);</script>{% endblock %}

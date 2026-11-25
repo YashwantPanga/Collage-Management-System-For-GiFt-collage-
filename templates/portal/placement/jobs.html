@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+{% block title %}Jobs{% endblock %}
+{% block page_title %}{% if lvl == 'register' %}Job Board{% else %}Job Postings & Vacancies{% endif %}{% endblock %}
+{% block content %}
+<div class="toolbar"><span></span>{% if can_post %}<a href="{% url 'cms:job_add' %}" class="btn-theme"><i class="fa-solid fa-plus"></i> Post a Job</a>{% endif %}</div>
+<div class="row g-3">
+    {% for r in rows %}
+    <div class="col-md-6 col-xl-4"><div class="card-p d-flex flex-column">
+        <div class="d-flex justify-content-between gap-2 mb-2"><div><h3 class="h5 mb-0">{{ r.j.title }}</h3><div class="small text-muted">{{ r.j.company.name }}{% if r.j.location %} · {{ r.j.location }}{% endif %}</div></div><span class="st st-info text-nowrap">{{ r.j.package_lpa }} LPA</span></div>
+        <p class="small mb-2">{{ r.j.description|truncatechars:140 }}</p>
+        <div class="small text-muted mb-3">Min CGPA {{ r.j.min_cgpa }} · Max backlogs {{ r.j.max_backlogs }}{% if r.j.min_attendance %} · Attendance ≥ {{ r.j.min_attendance }}%{% endif %}<br>Apply by {{ r.j.deadline|date:"d M Y" }} · {{ r.j.vacancies }} vacancies{% if lvl != 'register' %} · {{ r.j.n }} applicants{% endif %}</div>
+        <div class="mt-auto d-flex flex-wrap gap-2 align-items-center">
+            {% if lvl == 'register' %}
+                {% if r.applied %}<span class="st st-applied">Applied</span>{% elif r.eligible %}<span class="st st-success">Eligible</span>{% else %}<span class="st st-danger" title="{{ r.reasons|join:'; ' }}">Not eligible</span>{% endif %}
+            {% else %}
+                {% if r.j.is_open and r.j.deadline >= today %}<span class="st st-success">Open</span>{% else %}<span class="st">Closed</span>{% endif %}
+            {% endif %}
+            <a href="{% url 'cms:job_detail' r.j.pk %}" class="btn-ghost btn-sm-p ms-auto">{% if lvl == 'register' %}View & Apply{% else %}Manage{% endif %}</a>
+        </div>
+    </div></div>
+    {% empty %}<div class="col-12"><div class="card-p"><div class="empty"><i class="fa-solid fa-briefcase"></i>No job postings yet.</div></div></div>{% endfor %}
+</div>
+{% endblock %}

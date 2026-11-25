@@ -1,0 +1,25 @@
+{% extends "website/base.html" %}
+{% load static %}
+{% block title %}Faculty — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Our Faculty" banner="brand/hero-students.jpg" %}{% endblock %}
+{% block content %}
+<section class="faculty space overflow-hidden">
+    <div class="professor-shape1 shape-mockup movingX d-none d-xl-inline-block" data-bottom="0%" data-right="2%"><img src="{% static 'assets/img/shape/professor-2-1.png' %}" alt=""></div>
+    <div class="container th-container4">
+        <div class="row justify-content-between align-items-center mb-60 gy-3">
+            <div class="col-lg-6"><div class="title-area mb-0"><span class="sub-title">FACULTY</span><h2 class="sec-title">Experienced, dedicated mentors</h2></div></div>
+            <div class="col-lg-5">
+                <div class="faculty-search-wrap">
+                    <form action="" method="get">
+                        <input type="text" name="q" value="{{ q }}" placeholder="Search by name, department or specialization" autocomplete="off">
+                        <button type="submit" aria-label="Search"><i class="fal fa-search"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row gy-5 justify-content-center">
+            {% for prof in faculty %}{% include "website/partials/faculty_card.html" %}{% empty %}<p class="text-center">No faculty found.</p>{% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}{% if user.role == 'hod' %}Department Dashboard{% else %}Administration Dashboard{% endif %}{% endblock %}
+{% block crumb %}Welcome, {{ user.display_name }} · {{ user.get_role_display }}{% if user.department %} · {{ user.department }}{% endif %}{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico"><i class="fa-solid fa-user-graduate"></i></div><div><div class="val">{{ total_students|intcomma }}</div><div class="lbl">Total Students</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico blue"><i class="fa-solid fa-chalkboard-user"></i></div><div><div class="val">{{ total_faculty }}</div><div class="lbl">Faculty Strength</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico green"><i class="fa-solid fa-calendar-check"></i></div><div><div class="val">{{ attendance_pct|default:"—" }}{% if attendance_pct is not None %}%{% endif %}</div><div class="lbl">Avg. Attendance</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico amber"><i class="fa-solid fa-award"></i></div><div><div class="val">{{ pass_pct|default:"—" }}{% if pass_pct is not None %}%{% endif %}</div><div class="lbl">Exam Pass Rate</div></div></div></div></div>
+    {% if show.fees %}
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico green"><i class="fa-solid fa-indian-rupee-sign"></i></div><div><div class="val">₹{{ fee_collected|floatformat:0|intcomma }}</div><div class="lbl">Fees Collected ({{ fee_pct|default:0 }}%)</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico"><i class="fa-solid fa-hourglass-half"></i></div><div><div class="val">₹{{ fee_pending|floatformat:0|intcomma }}</div><div class="lbl">Pending Fees</div></div></div></div></div>
+    {% endif %}
+    {% if show.placement %}
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico blue"><i class="fa-solid fa-briefcase"></i></div><div><div class="val">{{ placed }}{% if placement_pct is not None %} <small class="fs-6 text-muted">({{ placement_pct }}%)</small>{% endif %}</div><div class="lbl">Students Placed</div></div></div></div></div>
+    {% endif %}
+    {% if show.admission %}
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico amber"><i class="fa-solid fa-file-signature"></i></div><div><div class="val">{{ applications_total }}</div><div class="lbl">Applications</div></div></div></div></div>
+    {% endif %}
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Department-wise Students</h2><a href="{% url 'cms:students' %}" class="small">View students</a></div><div class="chart-box"><canvas id="cDeptStudents"></canvas></div></div></div>
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Faculty by Department</h2></div><div class="chart-box"><canvas id="cDeptFaculty"></canvas></div></div></div>
+    {% if show.attendance %}<div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Attendance by Department (%)</h2><a href="{% url 'cms:attendance_report' %}" class="small">Reports</a></div><div class="chart-box"><canvas id="cDeptAtt"></canvas></div></div></div>{% endif %}
+    {% if show.fees %}
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Fee Collection — Collected vs Pending</h2><a href="{% url 'cms:fee_reports' %}" class="small">Financial summary</a></div><div class="chart-box"><canvas id="cFeeSplit"></canvas></div></div></div>
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Monthly Collections (₹)</h2></div><div class="chart-box"><canvas id="cFee"></canvas></div></div></div>
+    {% endif %}
+    {% if show.exams %}<div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Pass % by Exam</h2><a href="{% url 'cms:results_admin' %}" class="small">Results</a></div><div class="chart-box"><canvas id="cPass"></canvas></div></div></div>{% endif %}
+    {% if show.admission %}
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Admission Pipeline</h2><a href="{% url 'cms:admission_report' %}" class="small">Admission report</a></div><div class="chart-box"><canvas id="cApps"></canvas></div></div></div>
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Applications Trend</h2></div><div class="chart-box"><canvas id="cAppTrend"></canvas></div></div></div>
+    {% endif %}
+</div>
+
+<div class="row g-3">
+    {% if recent_apps %}
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>Recent Applications</h2><a href="{% url 'cms:applications' %}" class="small">All</a></div>
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>No.</th><th>Name</th><th>Program</th><th>Status</th></tr></thead><tbody>
+        {% for a in recent_apps %}<tr><td><a href="{% url 'cms:application_detail' a.pk %}">{{ a.application_no }}</a></td><td>{{ a.full_name }}</td><td>{{ a.course.code }}</td><td><span class="st st-{{ a.status }}">{{ a.get_status_display }}</span></td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+    {% endif %}
+    {% if recent_payments %}
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>Recent Payments</h2><a href="{% url 'cms:payments' %}" class="small">All</a></div>
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>Receipt</th><th>Student</th><th>Amount</th><th>Date</th></tr></thead><tbody>
+        {% for p in recent_payments %}<tr><td><a href="{% url 'cms:receipt' p.pk %}">{{ p.receipt_no }}</a></td><td>{{ p.invoice.student.user.display_name }}</td><td>₹{{ p.amount|intcomma }}</td><td>{{ p.paid_at|date:"d M" }}</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+    {% endif %}
+    {% if show.faculty and pending_leaves %}
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Pending Leave Requests</h2><a href="{% url 'cms:leaves' %}" class="btn-theme btn-sm-p">Review {{ pending_leaves }}</a></div><p class="mb-0">There are {{ pending_leaves }} leave request(s) waiting for approval.</p></div></div>
+    {% endif %}
+    {% if recent_audit %}
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>Recent Activity (Audit)</h2><a href="{% url 'cms:audit_log' %}" class="small">Audit log</a></div>
+        <div class="table-wrap"><table class="table-p"><tbody>
+        {% for l in recent_audit %}<tr><td class="small text-muted">{{ l.created_at|date:"d M H:i" }}</td><td>{{ l.user.username|default:"—" }}</td><td><code>{{ l.action }}</code></td><td class="small">{{ l.target|truncatechars:40 }}</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+const C = {{ charts|safe }};
+drawChart("cDeptStudents", "bar", C.deptStudents.labels, [{label: "Students", data: C.deptStudents.data}]);
+drawChart("cDeptFaculty", "doughnut", C.deptFaculty.labels, [{label: "Faculty", data: C.deptFaculty.data}]);
+drawChart("cDeptAtt", "bar", C.deptAttendance.labels, [{label: "Attendance %", data: C.deptAttendance.data}], {max: 100});
+drawChart("cFeeSplit", "doughnut", C.feeSplit.labels, [{label: "₹", data: C.feeSplit.data, backgroundColor: ["#1f9d55", "#D3224D"]}]);
+drawChart("cFee", "line", C.fee.labels, [{label: "Collected ₹", data: C.fee.data}]);
+drawChart("cPass", "bar", C.passByExam.labels, [{label: "Pass %", data: C.passByExam.data, backgroundColor: "#1f9d55"}], {max: 100});
+drawChart("cApps", "bar", C.appStatus.labels, [{label: "Applications", data: C.appStatus.data, backgroundColor: "#2563eb"}]);
+drawChart("cAppTrend", "line", C.appTrend.labels, [{label: "Applications", data: C.appTrend.data}]);
+</script>
+{% endblock %}

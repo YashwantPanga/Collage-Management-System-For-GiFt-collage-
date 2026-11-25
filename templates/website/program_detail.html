@@ -1,0 +1,66 @@
+{% extends "website/base.html" %}
+{% load static site_tags humanize %}
+{% block title %}{{ course.name }} — {{ college.name }}{% endblock %}
+{% block meta_description %}{{ course.short_description }}{% endblock %}
+{% block breadcrumb %}{% url 'website:programs' as purl %}{% include "website/partials/breadcrumb.html" with title=course.name parent="Programs" parent_url=purl %}{% endblock %}
+{% block content %}
+<section class="space">
+    <div class="container th-container4">
+        <div class="row gx-60 gy-5">
+            <div class="col-xl-8">
+                <div class="program-details">
+                    <div class="mb-40"><img src="{{ course.image|asset }}" alt="{{ course.name }}" class="w-100" style="border-radius:20px;max-height:460px;object-fit:cover;"></div>
+                    <span class="sub-title">{{ course.get_level_display }} · {{ course.department.name }}</span>
+                    <h2 class="sec-title mb-20">{{ course.name }}</h2>
+                    <p>{{ course.description|default:course.short_description|linebreaksbr }}</p>
+                    <div class="row gy-3 my-4">
+                        <div class="col-6 col-md-3"><div class="p-3 bg-smoke rounded-3 text-center"><i class="fa-solid fa-clock text-theme"></i><h4 class="h5 mt-2 mb-0">{{ course.duration_years }} Years</h4><small>Duration</small></div></div>
+                        <div class="col-6 col-md-3"><div class="p-3 bg-smoke rounded-3 text-center"><i class="fa-solid fa-layer-group text-theme"></i><h4 class="h5 mt-2 mb-0">{{ course.total_semesters }}</h4><small>Semesters</small></div></div>
+                        <div class="col-6 col-md-3"><div class="p-3 bg-smoke rounded-3 text-center"><i class="fa-solid fa-users text-theme"></i><h4 class="h5 mt-2 mb-0">{{ course.seats }}</h4><small>Seats</small></div></div>
+                        <div class="col-6 col-md-3"><div class="p-3 bg-smoke rounded-3 text-center"><i class="fa-solid fa-code text-theme"></i><h4 class="h5 mt-2 mb-0">{{ course.code }}</h4><small>Code</small></div></div>
+                    </div>
+                    {% if course.eligibility %}<h3 class="h4">Eligibility</h3><p>{{ course.eligibility }}</p>{% endif %}
+
+                    {% if subjects %}
+                    <h3 class="h4 mt-4">Curriculum</h3>
+                    <div class="table-responsive">
+                        <table class="table table-plain align-middle">
+                            <thead><tr><th>Sem</th><th>Code</th><th>Subject</th><th>Credits</th></tr></thead>
+                            <tbody>{% for s in subjects %}<tr><td>{{ s.semester }}</td><td>{{ s.code }}</td><td>{{ s.name }}</td><td>{{ s.credits }}</td></tr>{% endfor %}</tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+
+                    {% if fees %}
+                    <h3 class="h4 mt-4">Fee Structure (General category)</h3>
+                    <div class="table-responsive">
+                        <table class="table table-plain align-middle">
+                            <thead><tr><th>Semester</th><th>Tuition</th><th>Exam</th><th>Other</th><th>Total</th></tr></thead>
+                            <tbody>{% for f in fees %}<tr><td>{{ f.semester }}</td><td>₹{{ f.tuition_fee|intcomma }}</td><td>₹{{ f.exam_fee|intcomma }}</td><td>₹{{ f.development_fee|add:f.other_fee|intcomma }}</td><td><strong>₹{{ f.total|intcomma }}</strong></td></tr>{% endfor %}</tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                    <div class="btn-wrap mt-4">
+                        <a href="{% url 'cms:apply' %}?course={{ course.pk }}" class="th-btn th-icon">Apply for this Program</a>
+                        <a href="{% url 'website:contact' %}" class="th-btn style-border1 th-icon">Enquire</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <aside class="sidebar-area">
+                    <div class="widget widget_categories">
+                        <h3 class="widget_title">Other Programs</h3>
+                        <ul>{% for o in others %}<li><a href="{{ o.get_absolute_url }}">{{ o.name }}</a></li>{% endfor %}</ul>
+                    </div>
+                    <div class="widget">
+                        <h3 class="widget_title">Admission Helpline</h3>
+                        <p><i class="fa-solid fa-phone text-theme me-2"></i><a href="tel:{{ college.phone_raw }}">{{ college.phone }}</a></p>
+                        <p><i class="fa-solid fa-envelope text-theme me-2"></i><a href="mailto:{{ college.email }}">{{ college.email }}</a></p>
+                        <a href="{% url 'cms:apply' %}?course={{ course.pk }}" class="th-btn btn-fw">Apply Online</a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

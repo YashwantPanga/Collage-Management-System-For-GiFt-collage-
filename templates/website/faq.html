@@ -1,0 +1,25 @@
+{% extends "website/base.html" %}
+{% load static %}
+{% block title %}FAQs — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Frequently Asked Questions" %}{% endblock %}
+{% block content %}
+<section class="faq-area-1 position-relative space overflow-hidden">
+    <div class="container">
+        <div class="row gy-30 gx-30 align-items-start justify-content-center">
+            <div class="col-xxl-4 col-lg-5">
+                <div class="faq-imgbox">
+                    <div class="img1"><img src="{% static 'brand/student-sonakumari.webp' %}" alt="GIFT student"><img src="{% static 'brand/student-manisha.webp' %}" alt="GIFT student"></div>
+                    <div class="img2"><img src="{% static 'brand/student-abhipsa.webp' %}" alt="GIFT student"></div>
+                </div>
+            </div>
+            <div class="col-xxl-8 col-lg-7">
+                <div class="faq-content">
+                    <div class="title-area"><span class="sub-title">FAQ</span><h2 class="sec-title">Got questions? We have answers.</h2></div>
+                    {% include "website/partials/faq_accordion.html" %}
+                    <p class="mt-4">Still have a question? <a href="{% url 'website:contact' %}">Contact the admission cell</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

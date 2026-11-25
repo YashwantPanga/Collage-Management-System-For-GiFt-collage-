@@ -1,0 +1,13 @@
+{% extends "portal/base.html" %}
+{% block title %}Admission Report{% endblock %}
+{% block page_title %}Admission Reports & Seat Utilization{% endblock %}
+{% block content %}
+<div class="card-p mb-3"><div class="card-head"><h2>Applications vs Enrolled</h2><button class="btn-ghost btn-sm-p no-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button></div><div class="chart-box"><canvas id="cAdm"></canvas></div></div>
+<div class="card-p">
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr><th>Program</th><th>Department</th><th>Seats</th><th>Applications</th><th>Approved</th><th>Rejected</th><th>Enrolled</th><th>Seat Utilization</th></tr></thead>
+        <tbody>{% for r in rows %}<tr><td>{{ r.c.name }}</td><td>{{ r.c.department.code }}</td><td>{{ r.c.seats }}</td><td>{{ r.c.total }}</td><td>{{ r.c.approved }}</td><td>{{ r.c.rejected }}</td><td>{{ r.c.enrolled }}</td><td style="min-width:140px"><div class="bar"><span style="width:{{ r.util }}%"></span></div><small>{{ r.util }}%</small></td></tr>{% endfor %}</tbody>
+    </table></div>
+</div>
+{% endblock %}
+{% block extra_js %}<script>const D = {{ chart|safe }}; drawChart("cAdm", "bar", D.labels, [{label: "Applications", data: D.apps}, {label: "Enrolled", data: D.enrolled}]);</script>{% endblock %}

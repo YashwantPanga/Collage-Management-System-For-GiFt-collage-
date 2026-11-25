@@ -1,0 +1,17 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Payment Gateway{% endblock %}
+{% block page_title %}Payment Gateway (Test Mode){% endblock %}
+{% block content %}
+<div class="card-p" style="max-width:520px">
+    <div class="alert alert-warning small"><strong>Test mode:</strong> no real money moves. Configure <code>RAZORPAY_KEY_ID</code> and <code>RAZORPAY_KEY_SECRET</code> in <code>.env</code> to switch to the live Razorpay checkout.</div>
+    <h2 class="h5">Pay ₹{{ payment.amount|intcomma }}</h2>
+    <p class="small mb-1">To: {{ college.full_name }}</p>
+    <p class="small">Order: <code>{{ payment.gateway_order_id }}</code> · Invoice {{ inv.invoice_no }}</p>
+    <form method="post" action="{% url 'cms:payment_callback' payment.pk %}" class="d-flex gap-2 flex-wrap">{% csrf_token %}
+        <input type="hidden" name="order" value="{{ payment.gateway_order_id }}">
+        <button name="result" value="success" class="btn-theme btn-ok"><i class="fa-solid fa-check"></i> Simulate Successful Payment</button>
+        <button name="result" value="failed" class="btn-ghost btn-danger-p">Simulate Failure</button>
+    </form>
+</div>
+{% endblock %}

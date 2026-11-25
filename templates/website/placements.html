@@ -1,0 +1,36 @@
+{% extends "website/base.html" %}
+{% load static %}
+{% block title %}Placements — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Training & Placements" banner="brand/campus-leader.webp" %}{% endblock %}
+{% block content %}
+<div class="counter-area1 overflow-hidden space-top">
+    <div class="container th-container2">
+        <div class="counter-wrap1">
+            <div class="counter-card"><div class="box-icon"><img src="{% static 'assets/img/icon/counter-icon1-1.svg' %}" alt=""></div><div class="media-body"><h3 class="box-number"><span class="counter-number">98</span>%</h3><p class="box-text">Placement since 2011</p></div></div>
+            <div class="divider"></div>
+            <div class="counter-card"><div class="box-icon"><img src="{% static 'assets/img/icon/counter-icon1-2.svg' %}" alt=""></div><div class="media-body"><h3 class="box-number"><span class="counter-number">{{ companies|length }}</span>+</h3><p class="box-text">Recruiting Partners</p></div></div>
+            <div class="divider"></div>
+            <div class="counter-card"><div class="box-icon"><img src="{% static 'assets/img/icon/counter-icon1-3.svg' %}" alt=""></div><div class="media-body"><h3 class="box-number"><span class="counter-number">{{ count }}</span></h3><p class="box-text">Offers This Year</p></div></div>
+            <div class="divider"></div>
+        </div>
+    </div>
+</div>
+<section class="space">
+    <div class="container">
+        <div class="title-area text-center"><span class="sub-title">OUR TOP RECRUITERS</span><h2 class="sec-title">Companies that hire GIFTIANs</h2></div>
+        <div class="text-center">{% for c in companies %}<span class="recruiter-chip"><i class="fa-solid fa-building text-theme"></i>{{ c.name }}</span>{% endfor %}</div>
+        {% if selected %}
+        <div class="title-area text-center mt-60"><span class="sub-title">RECENTLY PLACED</span><h2 class="sec-title">Congratulations!</h2></div>
+        <div class="row gy-4">
+            {% for a in selected %}
+            <div class="col-md-6 col-lg-4"><div class="feature-card text-start h-100"><h3 class="box-title mb-1">{{ a.student.user.display_name }}</h3><p class="mb-1">{{ a.student.course.code }}</p><p class="mb-0"><strong>{{ a.job.company.name }}</strong>{% if a.offered_package %} · {{ a.offered_package }} LPA{% endif %}</p></div></div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="text-center mt-60">
+            <a href="{% url 'accounts:register' %}?role=recruiter" class="th-btn th-icon">Recruit from GIFT</a>
+            <a href="{% url 'cms:jobs' %}" class="th-btn style-border1 th-icon">Student Job Board</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

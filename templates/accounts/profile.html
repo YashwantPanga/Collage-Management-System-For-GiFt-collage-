@@ -1,0 +1,25 @@
+{% extends "portal/base.html" %}
+{% block title %}My Account{% endblock %}
+{% block page_title %}My Account{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-7"><div class="card-p">
+        <div class="card-head"><h2>Profile</h2><span class="st">{{ user.get_role_display }}</span></div>
+        <form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+            {% include "website/partials/form_fields.html" %}
+            <button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+        </form>
+    </div></div>
+    <div class="col-lg-5"><div class="card-p">
+        <div class="card-head"><h2>Change Password</h2></div>
+        <form method="post" novalidate>{% csrf_token %}
+            <input type="hidden" name="change_password" value="1">
+            {% include "website/partials/form_fields.html" with form=pwd_form wide_fields="old_password new_password1 new_password2" %}
+            <button class="btn-theme"><i class="fa-solid fa-key"></i> Update Password</button>
+        </form>
+        <hr>
+        <p class="small mb-1"><strong>Username:</strong> {{ user.username }}</p>
+        <p class="small mb-0"><strong>Last login:</strong> {{ user.last_login|date:"d M Y H:i" }}</p>
+    </div></div>
+</div>
+{% endblock %}

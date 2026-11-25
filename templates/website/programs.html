@@ -1,0 +1,37 @@
+{% extends "website/base.html" %}
+{% load static %}
+{% block title %}Programs — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Our Programs" banner="brand/prog-btech.jpg" %}{% endblock %}
+{% block content %}
+<section class="program-area2 position-relative overflow-hidden space" id="program-sec">
+    <div class="container th-container4">
+        <div class="row justify-content-between">
+            <div class="col-xl-6">
+                <div class="title-area pe-xl-4">
+                    <h2 class="sec-title">We offer {{ programs|length }}+ Programs at <span class="d-block">GIFT Autonomous</span></h2>
+                    <p class="mt-20">A great career starts with a great education. Our industry-aligned curriculum, NBA-accredited programs and 98%+ placement record put you on the path to a rewarding career.</p>
+                    <span><a href="{% url 'website:faq' %}"> Have more questions? </a> Check our FAQs or contact our <a href="{% url 'website:contact' %}"> admission team</a></span>
+                </div>
+            </div>
+            <div class="col-xl-5 col-xxl-4">
+                <div class="title-area">
+                    <h2 class="sec-title">Degree & Levels</h2>
+                    <div class="program-btn mt-25 d-flex flex-wrap gap-2">
+                        <a href="{% url 'website:programs' %}" class="th-btn {% if not level %}{% else %}style-border2{% endif %}">All</a>
+                        {% for code, label in levels %}
+                        <a href="?level={{ code }}" class="th-btn {% if level == code %}{% else %}style-border2{% endif %}">{{ label }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row gy-4 mt-2">
+            {% for p in programs %}
+            <div class="col-xl-4 col-md-6">{% include "website/partials/program_card.html" %}</div>
+            {% empty %}
+            <div class="col-12"><p class="text-center">No programs found for this level.</p></div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

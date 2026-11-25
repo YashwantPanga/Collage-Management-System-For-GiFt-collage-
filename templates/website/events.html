@@ -1,0 +1,15 @@
+{% extends "website/base.html" %}
+{% load static %}
+{% block title %}Events — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Events" banner="brand/youth-parliament.jpg" %}{% endblock %}
+{% block content %}
+<section class="event-area-1 position-relative space" id="event-sec">
+    <div class="event-shape shape-mockup d-none d-xxl-block" data-top="0%" data-left="0%"><img src="{% static 'assets/img/shape/shape-2.png' %}" alt=""></div>
+    <div class="container th-container4">
+        <div class="event-card-wrap">
+            {% for e in page %}{% include "website/partials/event_card.html" %}{% empty %}<p class="text-center">No events yet.</p>{% endfor %}
+        </div>
+        {% include "website/partials/pagination.html" %}
+    </div>
+</section>
+{% endblock %}

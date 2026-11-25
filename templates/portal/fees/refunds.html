@@ -1,0 +1,19 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Refunds{% endblock %}
+{% block page_title %}Refund Management{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-4"><div class="card-p">
+        <div class="card-head"><h2>Record a Refund</h2></div>
+        <form method="post" novalidate>{% csrf_token %}{% include "website/partials/form_fields.html" with wide_fields="invoice payment amount reason" %}<button class="btn-theme">Save</button></form>
+    </div></div>
+    <div class="col-lg-8"><div class="card-p">
+        <div class="table-wrap"><table class="table-p">
+            <thead><tr><th>Date</th><th>Student</th><th>Invoice</th><th>Amount</th><th>Reason</th><th>Status</th><th></th></tr></thead>
+            <tbody>{% for r in rows %}<tr><td>{{ r.created_at|date:"d M Y" }}</td><td>{{ r.invoice.student.user.display_name }}</td><td>{{ r.invoice.invoice_no }}</td><td>₹{{ r.amount|intcomma }}</td><td class="small">{{ r.reason|truncatechars:60 }}</td><td><span class="st st-{{ r.status }}">{{ r.get_status_display }}</span></td>
+                <td class="actions">{% if r.status == 'requested' %}<form method="post" class="d-inline-flex gap-1">{% csrf_token %}<input type="hidden" name="id" value="{{ r.pk }}"><button name="decide" value="processed" class="btn-theme btn-ok btn-sm-p">Process</button><button name="decide" value="rejected" class="btn-ghost btn-danger-p btn-sm-p">Reject</button></form>{% else %}<span class="small text-muted">{{ r.processed_by.display_name|default:"" }}</span>{% endif %}</td></tr>{% empty %}<tr><td colspan="7" class="empty">No refunds.</td></tr>{% endfor %}</tbody>
+        </table></div>
+    </div></div>
+</div>
+{% endblock %}

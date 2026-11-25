@@ -1,0 +1,16 @@
+{% extends "portal/base.html" %}
+{% block title %}My Applications{% endblock %}
+{% block page_title %}My Applications{% endblock %}
+{% block content %}
+<div class="card-p">
+    <div class="card-head"><h2>Application Status</h2><a href="{% url 'cms:apply' %}" class="btn-theme"><i class="fa-solid fa-plus"></i> New Application</a></div>
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr><th>Application No.</th><th>Program</th><th>Submitted</th><th>Documents</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        {% for a in apps %}
+        <tr><td><strong>{{ a.application_no }}</strong></td><td>{{ a.course.name }}</td><td>{{ a.created_at|date:"d M Y" }}</td><td>{{ a.documents.count }}</td><td><span class="st st-{{ a.status }}">{{ a.get_status_display }}</span></td><td class="actions"><a href="{% url 'cms:application_detail' a.pk %}" class="btn-ghost btn-sm-p">Track / Upload</a></td></tr>
+        {% empty %}<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-file-signature"></i>No applications yet. <a href="{% url 'cms:apply' %}">Apply now</a>.</div></td></tr>{% endfor %}
+        </tbody>
+    </table></div>
+</div>
+{% endblock %}

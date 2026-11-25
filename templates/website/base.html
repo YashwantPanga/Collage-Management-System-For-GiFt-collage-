@@ -1,0 +1,420 @@
+{% load static site_tags %}<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}{{ college.name }} — NAAC A++ Engineering College in Bhubaneswar{% endblock %}</title>
+    <meta name="author" content="{{ college.full_name }}">
+    <meta name="description" content="{% block meta_description %}{{ college.tagline }}{% endblock %}">
+    <meta name="robots" content="INDEX,FOLLOW">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/png" href="{% static college.logo %}">
+    <link rel="apple-touch-icon" href="{% static college.logo %}">
+    <meta name="theme-color" content="#D3224D">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/brand.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader ">
+        <button class="th-btn preloaderCls">Cancel Preloader </button>
+        <div class="preloader-inner">
+            <img src="{% static college.logo %}" alt="{{ college.short }}" class="preloader-logo">
+            <span class="loader">
+                GIFT
+                <span class="loading-text">GIFT</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Sidemenu -->
+    <div class="sidemenu-wrapper ">
+        <div class="sidemenu-content">
+            <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+            <div class="widget footer-widget">
+                <div class="th-widget-about">
+                    <div class="about-logo">
+                        <a href="{% url 'website:home' %}"><img src="{% static college.logo %}" alt="{{ college.name }}" class="brand-logo"></a>
+                    </div>
+                    <p class="about-text">{{ college.about }}</p>
+                    <div class="footer-info">
+                        <a href="{% url 'website:contact' %}"><span class="footer-info-icon"><i class="fa-solid fa-location-dot"></i></span> {{ college.address_short }}</a>
+                        <a href="mailto:{{ college.email }}"><span class="footer-info-icon"><i class="fa-solid fa-envelope"></i></span> {{ college.email }}</a>
+                        <a href="tel:{{ college.phone_raw }}"><span class="footer-info-icon"><i class="fa-solid fa-phone"></i></span> {{ college.phone }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">Quick Access</h3>
+                <div class="menu-all-pages-container">
+                    <ul class="menu side-quick">
+                        <li><a href="{% url 'accounts:login' %}"><i class="fa-solid fa-right-to-bracket me-2"></i>Student / Staff Login</a></li>
+                        <li><a href="{% url 'cms:apply' %}"><i class="fa-solid fa-file-signature me-2"></i>Apply Online</a></li>
+                        <li><a href="{% url 'cms:my_fees' %}"><i class="fa-solid fa-indian-rupee-sign me-2"></i>Pay Fees Online</a></li>
+                        <li><a href="{% url 'cms:my_results' %}"><i class="fa-solid fa-award me-2"></i>Results</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="widget footer-widget">
+                <h3 class="widget_title">Follow Us</h3>
+                <div class="th-social">
+                    <a href="{{ college.social.facebook }}" target="_blank" rel="noopener"><i class="fab fa-facebook-f"></i></a>
+                    <a href="{{ college.social.twitter }}" target="_blank" rel="noopener"><i class="fab fa-twitter"></i></a>
+                    <a href="{{ college.social.youtube }}" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+                    <a href="{{ college.social.linkedin }}" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="{{ college.social.instagram }}" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="popup-search-box">
+        <button class="searchClose"><i class="far fa-times"></i></button>
+        <form action="{% url 'website:search' %}" method="get">
+            <input type="text" name="q" placeholder="Search programs, news, events...">
+            <button type="submit"><i class="fal fa-search"></i></button>
+        </form>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="th-menu-wrapper">
+        <div class="th-menu-area text-center">
+            <button class="th-menu-toggle"><i class="fal fa-times"></i></button>
+            <div class="mobile-logo">
+                <a href="{% url 'website:home' %}"><img src="{% static college.logo %}" alt="{{ college.name }}" class="brand-logo"></a>
+            </div>
+            <div class="th-mobile-menu">
+                {% include "website/partials/menu_items.html" %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="th-header header-layout1">
+        <div class="header-top">
+            <div class="container th-container4">
+                <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
+                    <div class="col-auto d-none d-lg-block">
+                        <div class="header-links">
+                            <ul class="header-left-wrap">
+                                <li>
+                                    <div class="dropdown-link">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink1" data-bs-toggle="dropdown" aria-expanded="false"> Students</a>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
+                                            <li>
+                                                <a href="{% url 'cms:apply' %}">Apply Online</a>
+                                                <a href="{% url 'cms:my_results' %}">Results</a>
+                                                <a href="{% url 'cms:my_fees' %}">Pay Fees</a>
+                                                <a href="{% url 'cms:my_attendance' %}">Attendance</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li><a href="{% url 'accounts:login' %}">Staff</a></li>
+                                <li><a href="{% url 'accounts:register' %}?role=parent">Parents</a></li>
+                                <li><a href="{% url 'website:faculty' %}">Faculty</a> </li>
+                                <li><a href="{% url 'accounts:register' %}?role=recruiter">Recruiters</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="header-links">
+                            <ul class="header-right-wrap">
+                                {% if user.is_authenticated %}
+                                <li><i class="fa-solid fa-gauge-high"></i><a href="{% url 'cms:dashboard' %}">My Portal ({{ user.display_name }})</a></li>
+                                <li>
+                                    <form method="post" action="{% url 'accounts:logout' %}" class="d-inline">{% csrf_token %}
+                                        <i class="fa-solid fa-right-from-bracket"></i><button type="submit" class="link-btn-plain">Logout</button>
+                                    </form>
+                                </li>
+                                {% else %}
+                                <li><i class="fa-solid fa-user"></i><a href="#login-form" class="popup-content">Login / Register</a></li>
+                                {% endif %}
+                                <li><i class="fas fa-comments"></i><a href="{% url 'website:faq' %}">FAQ</a></li>
+                                <li><i class="fas fa-phone"></i><a href="tel:{{ college.phone_raw }}">{{ college.phone }}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-info d-none d-sm-block">
+            <div class="container th-container2">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-auto">
+                        <div class="header-logo">
+                            <a href="{% url 'website:home' %}"><img src="{% static college.logo %}" alt="{{ college.name }}" class="brand-logo"></a>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="header-info-right">
+                            <div class="header-info-item">
+                                <div class="header-info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                                <div class="header-info-content">
+                                    <span class="header-info-text">Address</span>
+                                    <h3 class="header-info-title"><a href="{% url 'website:contact' %}">{{ college.address_short }}</a></h3>
+                                </div>
+                            </div>
+                            <div class="header-info-item">
+                                <div class="header-info-icon"><i class="fa-solid fa-envelope"></i></div>
+                                <div class="header-info-content">
+                                    <span class="header-info-text">Email</span>
+                                    <h3 class="header-info-title"><a href="mailto:{{ college.email }}">{{ college.email }}</a></h3>
+                                </div>
+                            </div>
+                            <div class="header-info-item">
+                                <div class="header-info-icon"><i class="fa-solid fa-phone"></i></div>
+                                <div class="header-info-content">
+                                    <span class="header-info-text">Admission Helpline</span>
+                                    <h3 class="header-info-title"><a href="tel:{{ college.phone_raw }}">{{ college.phone }}</a></h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sticky-wrapper">
+            <div class="menu-area">
+                <div class="container th-container2">
+                    <div class="menu-wrapp">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-auto">
+                                <div class="header-left d-flex align-items-center">
+                                    <div class="header-logo d-block d-sm-none">
+                                        <a href="{% url 'website:home' %}"><img src="{% static college.logo %}" alt="{{ college.name }}" class="brand-logo"></a>
+                                    </div>
+                                    <div class="header-button d-none d-sm-block">
+                                        <a href="{% url 'cms:apply' %}" class="th-btn">
+                                            Apply Now
+                                            <img src="{% static 'assets/img/icon/right-icon.svg' %}" class="th-arrow" alt="icon">
+                                        </a>
+                                    </div>
+                                    <nav class="main-menu d-none d-xl-block">
+                                        {% include "website/partials/menu_items.html" %}
+                                    </nav>
+                                </div>
+                            </div>
+                            <div class="col-auto ms-lg-auto">
+                                <div class="header-button">
+                                    <form class="search-form" action="{% url 'website:search' %}" method="get">
+                                        <input type="text" name="q" placeholder="Search..." aria-label="Search">
+                                        <button type="submit" aria-label="Search"><i class="fa-light fa-magnifying-glass"></i></button>
+                                    </form>
+                                    <a href="#" class="icon-btn sideMenuToggler d-none d-xl-block" aria-label="Open side menu"><img src="{% static 'assets/img/icon/grid2.svg' %}" alt=""></a>
+                                    <button type="button" class="th-menu-toggle d-inline-block d-xl-none" aria-label="Open menu"><i class="far fa-bars"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {% if messages %}
+    <div class="site-toasts">
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block breadcrumb %}{% endblock %}
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer-wrapper footer-default footer-overlay" data-bg-src="{% static 'brand/footer-campus.jpg' %}">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row gy-40 align-items-center justify-content-between">
+                    <div class="col-xl-auto">
+                        <div class="footer-logo z-index-common" data-cue="slideInLeft">
+                            <a href="{% url 'website:home' %}"><img src="{% static college.logo %}" alt="{{ college.name }}" class="brand-logo footer-brand"></a>
+                        </div>
+                    </div>
+                    <div class="col-xl-auto">
+                        <div class="client-group-wrap z-index-common" data-cue="slideInRight">
+                            <h4 class="title">Have any question?
+                                <a href="{% url 'website:contact' %}"><img src="{% static 'assets/img/icon/chat2.svg' %}" alt=""> <span class="text-theme">Talk</span></a> to admissions
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="widget-area">
+                <div class="row justify-content-between">
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget footer-widget">
+                            <div class="th-widget-about">
+                                <h3 class="widget_title">About GIFT</h3>
+                                <p class="about-text">{{ college.about }}</p>
+                                <div class="footer-info">
+                                    <a href="{% url 'website:contact' %}"><span class="footer-info-icon"><i class="fa-solid fa-location-dot"></i></span> {{ college.address }}</a>
+                                    <a href="mailto:{{ college.email }}"><span class="footer-info-icon"><i class="fa-solid fa-envelope"></i></span> {{ college.email }}</a>
+                                    <a href="tel:{{ college.phone_raw }}"><span class="footer-info-icon"><i class="fa-solid fa-phone"></i></span> {{ college.phone }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-auto">
+                        <div class="widget widget_nav_menu footer-widget">
+                            <h3 class="widget_title">Useful Links</h3>
+                            <div class="menu-all-pages-container">
+                                <ul class="menu">
+                                    <li><a href="{% url 'website:admission' %}">Admission 2026</a></li>
+                                    <li><a href="{% url 'accounts:login' %}">Student Portal</a></li>
+                                    <li><a href="{% url 'website:faculty' %}">Faculty</a></li>
+                                    <li><a href="{% url 'website:placements' %}">Placements</a></li>
+                                    <li><a href="{% url 'website:notices' %}">Notices & News</a></li>
+                                    <li><a href="{% url 'website:events' %}">Events</a></li>
+                                    <li><a href="{% url 'website:contact' %}">Contact Us</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-auto">
+                        <div class="widget widget_nav_menu footer-widget">
+                            <h3 class="widget_title">Our Programs</h3>
+                            <div class="menu-all-pages-container">
+                                <ul class="menu">
+                                    <li><a href="{% url 'website:programs' %}?level=UG">B.Tech Programs</a></li>
+                                    <li><a href="{% url 'website:programs' %}?level=PG">M.Tech / MBA / MCA</a></li>
+                                    <li><a href="{% url 'website:programs' %}?level=DIP">Diploma</a></li>
+                                    <li><a href="{% url 'website:programs' %}?level=PHD">Ph.D Programs</a></li>
+                                    <li><a href="{% url 'website:departments' %}">Departments</a></li>
+                                    <li><a href="{% url 'website:campus' %}">Campus Life</a></li>
+                                    <li><a href="{% url 'website:faq' %}">FAQs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xl-auto">
+                        <div class="widget th-widget-instagram footer-widget">
+                            <h3 class="widget_title">Campus Gallery</h3>
+                            <div class="instagram-feeds">
+                                <div class="insta-thumb"><img src="{% static 'brand/campus1.jpg' %}" alt="GIFT campus"><a href="{% static 'brand/campus1.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/hero-gate.jpg' %}" alt="GIFT campus"><a href="{% static 'brand/hero-gate.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/hero-students.jpg' %}" alt="GIFT campus"><a href="{% static 'brand/hero-students.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/gift-a1.jpg' %}" alt="GIFT achievement"><a href="{% static 'brand/gift-a1.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/gift-a2.jpg' %}" alt="GIFT achievement"><a href="{% static 'brand/gift-a2.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/gift-a3.jpg' %}" alt="GIFT achievement"><a href="{% static 'brand/gift-a3.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/gift-a4.jpg' %}" alt="GIFT achievement"><a href="{% static 'brand/gift-a4.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/gift-a5.jpg' %}" alt="GIFT achievement"><a href="{% static 'brand/gift-a5.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                                <div class="insta-thumb"><img src="{% static 'brand/youth-parliament.jpg' %}" alt="Youth Parliament at GIFT"><a href="{% static 'brand/youth-parliament.jpg' %}" class="insta-btn popup-image"><i class="fab fa-instagram"></i></a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-wrap z-index-common">
+            <div class="container">
+                <div class="row justify-content-center gy-3 align-items-center">
+                    <div class="col-lg-6">
+                        <p class="copyright-text">
+                            <i class="fal fa-copyright"></i> Copyright {% now "Y" %} <a href="{% url 'website:home' %}">{{ college.full_name }}</a>. All Rights Reserved.
+                        </p>
+                    </div>
+                    <div class="col-lg-6 text-lg-end text-center">
+                        <div class="footer-links">
+                            <ul>
+                                <li><a href="{% url 'website:about' %}">About</a></li>
+                                <li><a href="{% url 'website:faq' %}">FAQs</a></li>
+                                <li><a href="{% url 'website:contact' %}">Contact</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll To Top -->
+    <div class="scroll-top">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+        </svg>
+    </div>
+
+    {% if not user.is_authenticated %}
+    <!-- Login / Register popup (template modal, wired to real authentication) -->
+    <div id="login-form" class="popup-login-register mfp-hide">
+        <ul class="nav" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-menu active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Login</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-menu" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Register</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade active show" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                <h3 class="box-title mb-30">Sign in to your account</h3>
+                <div class="th-login-form">
+                    <form action="{% url 'accounts:login' %}" method="POST" class="login-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{% url 'cms:dashboard' %}">
+                        <input type="hidden" name="remember" value="on">
+                        <div class="row">
+                            <div class="form-group col-12">
+                                <label for="popup_username">Username or email</label>
+                                <input type="text" class="form-control" name="username" id="popup_username" required autocomplete="username">
+                            </div>
+                            <div class="form-group col-12">
+                                <label for="popup_password">Password</label>
+                                <input type="password" class="form-control" name="password" id="popup_password" required autocomplete="current-password">
+                            </div>
+                            <div class="form-btn mb-20 col-12">
+                                <button class="th-btn btn-fw th-radius2" type="submit">Login</button>
+                            </div>
+                        </div>
+                        <div id="forgot_url"><a href="{% url 'accounts:password_reset' %}">Forgot password?</a></div>
+                    </form>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <h3 class="th-form-title mb-30">Create your account</h3>
+                <p>Students (applicants), parents and recruiters can register online. Staff accounts are created by the college administration.</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'accounts:register' %}?role=student" class="th-btn btn-fw th-radius2">Register as Student / Applicant</a>
+                    <a href="{% url 'accounts:register' %}?role=parent" class="th-btn style-border1 btn-fw th-radius2">Register as Parent</a>
+                    <a href="{% url 'accounts:register' %}?role=recruiter" class="th-btn style-border1 btn-fw th-radius2">Register as Recruiter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <script src="{% static 'assets/js/vendor/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.counterup.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'assets/js/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/js/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/js/wow.min.js' %}"></script>
+    <script src="{% static 'assets/js/gsap.min.js' %}"></script>
+    <script src="{% static 'assets/js/ScrollTrigger.min.js' %}"></script>
+    <script src="{% static 'assets/js/SplitText.min.js' %}"></script>
+    <script src="{% static 'assets/js/lenis.min.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

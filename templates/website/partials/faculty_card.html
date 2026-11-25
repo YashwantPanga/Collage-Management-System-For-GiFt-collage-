@@ -1,0 +1,14 @@
+{% load site_tags %}<div class="col-xl-3 col-lg-4 col-sm-6">
+    <div class="faculty-card wow fadeInUp" data-wow-delay=".{{ forloop.counter }}s">
+        <div class="box-img global-img">
+            <a href="{% url 'website:faculty_detail' prof.pk %}" class="d-block position-relative">
+                {% if prof.photo %}<img src="{{ prof.photo|asset }}" alt="{{ prof.user.display_name }}" class="img-1 profile">{% else %}<div class="faculty-avatar"><span>{{ prof.user.first_name|slice:":1" }}{{ prof.user.last_name|slice:":1" }}</span></div>{% endif %}
+            </a>
+        </div>
+        <div class="box-content">
+            <h3 class="box-title"><a href="{% url 'website:faculty_detail' prof.pk %}">{{ prof.user.display_name }}</a></h3>
+            <p class="mb-3">{{ prof.designation }} · {{ prof.department.code }}</p>
+            <a href="{% url 'website:faculty_detail' prof.pk %}" class="th-btn style-border1 th-icon">Profile</a>
+        </div>
+    </div>
+</div>

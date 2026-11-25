@@ -1,0 +1,43 @@
+{% extends "portal/base.html" %}
+{% block title %}{{ res.title }}{% endblock %}
+{% block page_title %}{{ res.title }}{% endblock %}
+{% block content %}
+<div class="card-p">
+    <div class="toolbar">
+        <form method="get">
+            {% if res.search %}<input class="form-control" name="q" value="{{ q }}" placeholder="Search…">{% endif %}
+            {% for f in filters %}
+            <select name="{{ f.name }}" class="form-select" onchange="this.form.submit()">
+                <option value="">All {{ f.label }}</option>
+                {% for v, l in f.options %}<option value="{{ v }}" {% if v == f.value %}selected{% endif %}>{{ l }}</option>{% endfor %}
+            </select>
+            {% endfor %}
+            {% if res.search or filters %}<button class="btn-ghost"><i class="fa-solid fa-filter"></i> Apply</button>{% endif %}
+        </form>
+        {% if can_edit %}<a href="{% url 'cms:resource_add' res.slug %}" class="btn-theme"><i class="fa-solid fa-plus"></i> Add New</a>{% endif %}
+    </div>
+    <div class="table-wrap">
+        <table class="table-p">
+            <thead><tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}{% if can_edit %}<th class="actions">Actions</th>{% endif %}</tr></thead>
+            <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for c in row.cells %}
+                <td>{% if c is True %}<span class="st st-True">Yes</span>{% elif c is False %}<span class="st st-False">No</span>{% elif c is None %}—{% else %}{{ c }}{% endif %}</td>
+                {% endfor %}
+                {% if can_edit %}
+                <td class="actions">
+                    <a href="{% url 'cms:resource_edit' res.slug row.obj.pk %}" class="btn-ghost btn-sm-p" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                    <a href="{% url 'cms:resource_delete' res.slug row.obj.pk %}" class="btn-ghost btn-sm-p btn-danger-p" title="Delete"><i class="fa-solid fa-trash"></i></a>
+                </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="{{ headers|length|add:1 }}"><div class="empty"><i class="fa-solid {{ res.icon }}"></i>No records found.</div></td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include "portal/partials/pager.html" %}
+</div>
+{% endblock %}

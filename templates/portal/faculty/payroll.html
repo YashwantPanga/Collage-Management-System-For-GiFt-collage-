@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Payroll{% endblock %}
+{% block page_title %}{% if lvl == 'own' %}My Payslips{% else %}Payroll{% endif %}{% endblock %}
+{% block crumb %}Salary computed from faculty attendance and approved leave (LOP deducted, 12% PF){% endblock %}
+{% block content %}
+<div class="card-p">
+    {% if lvl != 'own' %}
+    <div class="toolbar">
+        <form method="get"><input type="month" name="month" value="{{ month }}" class="form-control"><button class="btn-ghost">Show</button></form>
+        {% if can_run %}<form method="post">{% csrf_token %}<input type="hidden" name="month" value="{{ month }}"><button name="generate" value="1" class="btn-theme" data-confirm="Generate / recalculate payroll for {{ month }}?"><i class="fa-solid fa-calculator"></i> Generate Payroll</button></form>{% endif %}
+    </div>
+    {% endif %}
+    <form method="post">{% csrf_token %}<input type="hidden" name="month" value="{{ month }}">
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr>{% if can_run %}<th></th>{% endif %}<th>Faculty</th><th>Month</th><th>Working</th><th>Present</th><th>Paid Leave</th><th>LOP</th><th>Basic</th><th>Allowances</th><th>Deductions</th><th>Net Pay</th><th>Status</th><th></th></tr></thead>
+        <tbody>{% for p in rows %}<tr>{% if can_run %}<td>{% if not p.is_paid %}<input type="checkbox" name="ids" value="{{ p.pk }}" class="form-check-input">{% endif %}</td>{% endif %}<td>{{ p.faculty.user.display_name }}</td><td>{{ p.month|date:"M Y" }}</td><td>{{ p.working_days }}</td><td>{{ p.days_present }}</td><td>{{ p.paid_leave_days }}</td><td>{{ p.lop_days }}</td><td>₹{{ p.basic|intcomma }}</td><td>₹{{ p.allowances|intcomma }}</td><td>₹{{ p.deductions|intcomma }}</td><td><strong>₹{{ p.net_pay|intcomma }}</strong></td><td>{% if p.is_paid %}<span class="st st-paid">Paid</span>{% else %}<span class="st st-pending">Unpaid</span>{% endif %}</td><td class="actions"><a href="{% url 'cms:payslip' p.pk %}" class="btn-ghost btn-sm-p">Payslip</a></td></tr>{% empty %}<tr><td colspan="13" class="empty">No payroll records for this month.{% if can_run %} Click “Generate Payroll”.{% endif %}</td></tr>{% endfor %}</tbody>
+        {% if rows and lvl != 'own' %}<tfoot><tr><th colspan="{% if can_run %}10{% else %}9{% endif %}" class="text-end">Total</th><th>₹{{ total|intcomma }}</th><th colspan="2"></th></tr></tfoot>{% endif %}
+    </table></div>
+    {% if can_run and rows %}<button name="pay" value="1" class="btn-theme btn-ok mt-3"><i class="fa-solid fa-check"></i> Mark selected as paid</button>{% endif %}
+    </form>
+</div>
+{% endblock %}

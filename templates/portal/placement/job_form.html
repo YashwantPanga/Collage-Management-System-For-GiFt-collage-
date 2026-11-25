@@ -1,0 +1,13 @@
+{% extends "portal/base.html" %}
+{% block title %}Job Posting{% endblock %}
+{% block page_title %}{% if job %}Edit Job{% else %}Post a Job{% endif %}{% endblock %}
+{% block content %}
+<div class="card-p" style="max-width:1000px">
+    <form method="post" novalidate>{% csrf_token %}
+        {% include "website/partials/form_fields.html" %}
+        <p class="small text-muted">Hold Ctrl / Cmd to select multiple eligible courses (leave empty for all).</p>
+        <button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save Job</button>
+        <a href="{% url 'cms:jobs' %}" class="btn-ghost">Cancel</a>
+    </form>
+</div>
+{% endblock %}

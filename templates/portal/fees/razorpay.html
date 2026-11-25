@@ -1,0 +1,35 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Payment{% endblock %}
+{% block page_title %}Secure Payment{% endblock %}
+{% block content %}
+<div class="card-p" style="max-width:520px">
+    <h2 class="h5">Pay ₹{{ payment.amount|intcomma }} for {{ inv.invoice_no }}</h2>
+    <p class="small">The Razorpay checkout window will open. Do not close this page until payment completes.</p>
+    <button id="rzpBtn" class="btn-theme"><i class="fa-solid fa-lock"></i> Pay Now</button>
+    <form id="rzpForm" method="post" action="{% url 'cms:payment_callback' payment.pk %}">{% csrf_token %}
+        <input type="hidden" name="razorpay_order_id"><input type="hidden" name="razorpay_payment_id"><input type="hidden" name="razorpay_signature">
+    </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+(function () {
+    var f = document.getElementById("rzpForm");
+    var rzp = new Razorpay({
+        key: "{{ key }}", amount: {{ amount_paise }}, currency: "INR", name: "{{ college.name|escapejs }}",
+        description: "{{ inv.invoice_no }}", order_id: "{{ payment.gateway_order_id }}",
+        prefill: {name: "{{ inv.student.user.display_name|escapejs }}", email: "{{ inv.student.user.email|escapejs }}"},
+        theme: {color: "#D3224D"},
+        handler: function (r) {
+            f.razorpay_order_id.value = r.razorpay_order_id; f.razorpay_payment_id.value = r.razorpay_payment_id;
+            f.razorpay_signature.value = r.razorpay_signature; f.submit();
+        },
+        modal: {ondismiss: function () { f.submit(); }}
+    });
+    document.getElementById("rzpBtn").onclick = function (e) { e.preventDefault(); rzp.open(); };
+    rzp.open();
+})();
+</script>
+{% endblock %}

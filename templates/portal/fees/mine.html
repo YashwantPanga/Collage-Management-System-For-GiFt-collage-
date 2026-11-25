@@ -1,0 +1,28 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Fees{% endblock %}
+{% block page_title %}Fees & Payments{% endblock %}
+{% block crumb %}{% if student %}{{ student.user.display_name }} · {{ student.roll_no }}{% endif %}{% endblock %}
+{% block content %}
+{% include "portal/partials/ward_switch.html" %}
+{% if not student %}
+<div class="card-p"><div class="empty"><i class="fa-solid fa-wallet"></i>Fee details appear here after enrollment.</div></div>
+{% else %}
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card-p"><div class="stat"><div class="ico"><i class="fa-solid fa-indian-rupee-sign"></i></div><div><div class="val">₹{{ due|floatformat:2|intcomma }}</div><div class="lbl">Total Due</div></div></div></div></div>
+</div>
+<div class="card-p mb-3">
+    <div class="card-head"><h2>Invoices</h2></div>
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr><th>Invoice</th><th>Sem</th><th>Tuition</th><th>Exam</th><th>Other</th><th>Concession</th><th>Net</th><th>Paid</th><th>Balance</th><th>Due</th><th>Status</th><th></th></tr></thead>
+        <tbody>{% for i in invoices %}<tr><td>{{ i.invoice_no }}</td><td>{{ i.semester }}</td><td>₹{{ i.tuition_fee|intcomma }}</td><td>₹{{ i.exam_fee|intcomma }}</td><td>₹{{ i.other_fee|intcomma }}</td><td>{% if i.concession %}−₹{{ i.concession|intcomma }}{% if i.scholarship %}<div class="small text-muted">{{ i.scholarship }}</div>{% endif %}{% else %}—{% endif %}</td><td><strong>₹{{ i.net|intcomma }}</strong></td><td>₹{{ i.paid|intcomma }}</td><td>₹{{ i.balance|intcomma }}</td><td>{{ i.due_date|date:"d M Y" }}</td><td><span class="st st-{{ i.status|slugify }}">{{ i.status }}</span></td><td class="actions">{% if i.balance > 0 %}<a href="{% url 'cms:pay_invoice' i.pk %}" class="btn-theme btn-sm-p"><i class="fa-solid fa-credit-card"></i> Pay Online</a>{% endif %}</td></tr>{% empty %}<tr><td colspan="12" class="empty">No invoices.</td></tr>{% endfor %}</tbody>
+    </table></div>
+</div>
+<div class="card-p">
+    <div class="card-head"><h2>Payment History & Receipts</h2></div>
+    <div class="table-wrap"><table class="table-p"><thead><tr><th>Receipt</th><th>Invoice</th><th>Amount</th><th>Method</th><th>Transaction</th><th>Date</th><th></th></tr></thead><tbody>
+    {% for p in payments %}<tr><td>{{ p.receipt_no }}</td><td>{{ p.invoice.invoice_no }}</td><td>₹{{ p.amount|intcomma }}</td><td>{{ p.get_method_display }}</td><td class="small">{{ p.transaction_id }}</td><td>{{ p.paid_at|date:"d M Y" }}</td><td class="actions"><a href="{% url 'cms:receipt' p.pk %}" class="btn-ghost btn-sm-p"><i class="fa-solid fa-download"></i> Receipt</a></td></tr>{% empty %}<tr><td colspan="7" class="empty">No payments yet.</td></tr>{% endfor %}
+    </tbody></table></div>
+</div>
+{% endif %}
+{% endblock %}

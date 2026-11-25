@@ -1,0 +1,22 @@
+{% extends "accounts/auth_base.html" %}
+{% load static %}
+{% block title %}Login — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Portal Login" %}{% endblock %}
+{% block card %}
+<div class="text-center mb-4">
+    <img src="{% static college.logo %}" alt="{{ college.name }}" style="max-height:70px">
+    <h2 class="h3 mt-3 mb-1">Sign in to GIFT Portal</h2>
+    <p class="mb-0">Students, parents, faculty, staff and recruiters</p>
+</div>
+<form method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% include "website/partials/form_fields.html" with wide_fields="username password" %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <span></span>
+        <a href="{% url 'accounts:password_reset' %}">Forgot password?</a>
+    </div>
+    <button type="submit" class="th-btn btn-fw w-100">Login</button>
+</form>
+<p class="text-center mt-4 mb-0">New here? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+{% endblock %}

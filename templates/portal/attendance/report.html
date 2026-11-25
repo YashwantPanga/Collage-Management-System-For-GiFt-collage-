@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+{% block title %}Attendance Report{% endblock %}
+{% block page_title %}Monthly Attendance Report{% endblock %}
+{% block crumb %}Class-wise and subject-wise attendance · threshold {{ threshold|floatformat:0 }}%{% endblock %}
+{% block content %}
+<div class="card-p">
+    <div class="toolbar">
+        <form method="get">
+            <select name="batch" class="form-select">{% for b in batches %}<option value="{{ b.pk }}" {% if b == batch %}selected{% endif %}>{{ b }}</option>{% endfor %}</select>
+            <input type="month" name="month" value="{{ month }}" class="form-control">
+            <button class="btn-ghost"><i class="fa-solid fa-filter"></i> Show</button>
+        </form>
+        <div class="d-flex gap-2">
+            {% if batch %}<form method="post" action="?batch={{ batch.pk }}&month={{ month }}">{% csrf_token %}<button name="alerts" value="1" class="btn-theme" data-confirm="Send shortage alerts to students and parents below {{ threshold|floatformat:0 }}%?"><i class="fa-solid fa-bell"></i> Send Shortage Alerts</button></form>{% endif %}
+            <button class="btn-ghost no-print" onclick="window.print()"><i class="fa-solid fa-print"></i></button>
+        </div>
+    </div>
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr><th>Roll No.</th><th>Student</th>{% for s in subjects %}<th title="{{ s.name }}">{{ s.code }}</th>{% endfor %}<th>Classes</th><th>Overall</th></tr></thead>
+        <tbody>{% for r in rows %}<tr><td>{{ r.s.roll_no }}</td><td>{{ r.s.user.display_name }}</td>{% for p in r.per %}<td>{% if p is not None %}<span class="{% if p < threshold %}text-danger fw-bold{% endif %}">{{ p }}</span>{% else %}—{% endif %}</td>{% endfor %}<td>{{ r.total }}</td><td>{% if r.overall is not None %}<span class="st {% if r.overall < threshold %}st-danger{% else %}st-success{% endif %}">{{ r.overall }}%</span>{% else %}—{% endif %}</td></tr>{% empty %}<tr><td colspan="{{ subjects|length|add:4 }}" class="empty">No data for this month.</td></tr>{% endfor %}</tbody>
+    </table></div>
+</div>
+{% endblock %}

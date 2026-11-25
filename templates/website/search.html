@@ -1,0 +1,16 @@
+{% extends "website/base.html" %}
+{% block title %}Search — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Search" %}{% endblock %}
+{% block content %}
+<section class="space">
+    <div class="container">
+        <form class="mb-5 site-form" method="get"><div class="input-group"><input class="form-control" type="text" name="q" value="{{ q }}" placeholder="Search programs, notices, events"><button class="th-btn" type="submit">Search</button></div></form>
+        {% if q %}
+            {% for label, items in results.items %}
+            <h3 class="h4 mt-4">{{ label }}</h3>
+            <ul class="list-unstyled">{% for i in items %}<li class="mb-2"><i class="fa-solid fa-angle-right text-theme me-2"></i><a href="{{ i.get_absolute_url }}">{{ i }}</a></li>{% empty %}<li class="text-muted">No matches.</li>{% endfor %}</ul>
+            {% endfor %}
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

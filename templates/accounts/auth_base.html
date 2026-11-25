@@ -1,0 +1,15 @@
+{% extends "website/base.html" %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title=page_title|default:"Account" %}{% endblock %}
+{% block content %}
+<section class="space">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="{% block col %}col-lg-6 col-md-8{% endblock %}">
+                <div class="auth-card site-form">
+                    {% block card %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

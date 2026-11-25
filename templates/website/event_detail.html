@@ -1,0 +1,36 @@
+{% extends "website/base.html" %}
+{% load static site_tags %}
+{% block title %}{{ event.title }} — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% url 'website:events' as eurl %}{% include "website/partials/breadcrumb.html" with title=event.title parent="Events" parent_url=eurl %}{% endblock %}
+{% block content %}
+<section class="space">
+    <div class="container th-container4">
+        <div class="row gx-60 gy-5">
+            <div class="col-xl-8">
+                <img src="{{ event.image|asset }}" alt="{{ event.title }}" class="w-100 mb-40" style="border-radius:20px;max-height:480px;object-fit:cover;">
+                <div class="blog-meta mb-3">
+                    <a href="#"><i class="fa-solid fa-location-dot text-theme"></i> {{ event.venue }}</a> &nbsp;
+                    <a href="#"><i class="fa-regular fa-calendar-days text-theme"></i> {{ event.date|date:"d M Y" }}</a> &nbsp;
+                    {% if event.start_time %}<a href="#"><i class="fa-solid fa-clock text-theme"></i> {{ event.start_time|time:"h:i A" }}{% if event.end_time %} – {{ event.end_time|time:"h:i A" }}{% endif %}</a>{% endif %}
+                </div>
+                <h2 class="sec-title">{{ event.title }}</h2>
+                <p class="lead">{{ event.summary }}</p>
+                <div>{{ event.body|linebreaks }}</div>
+            </div>
+            <div class="col-xl-4">
+                <aside class="sidebar-area">
+                    <div class="widget">
+                        <h3 class="widget_title">Other Events</h3>
+                        {% for o in others %}
+                        <div class="recent-post">
+                            <div class="media-img"><a href="{{ o.get_absolute_url }}"><img src="{{ o.image|asset }}" alt="{{ o.title }}" style="width:80px;height:80px;object-fit:cover;"></a></div>
+                            <div class="media-body"><h4 class="post-title"><a class="text-inherit" href="{{ o.get_absolute_url }}">{{ o.title }}</a></h4><div class="recent-post-meta"><a href="{{ o.get_absolute_url }}"><i class="far fa-calendar"></i>{{ o.date|date:"d M Y" }}</a></div></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "portal/base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+{% block content %}
+<div class="card-p">
+    <div class="card-head"><h2>All Notifications</h2>
+        <form method="post">{% csrf_token %}<button class="btn-ghost btn-sm-p"><i class="fa-solid fa-check-double"></i> Mark all read</button></form>
+    </div>
+    {% for n in page %}
+    <a href="{% url 'cms:notification_open' n.pk %}" class="d-flex gap-3 border-bottom py-3 text-reset {% if not n.is_read %}fw-semibold{% endif %}">
+        <span class="st st-{{ n.level }}"><i class="fa-solid {% if n.level == 'success' %}fa-circle-check{% elif n.level == 'warning' %}fa-triangle-exclamation{% elif n.level == 'danger' %}fa-circle-exclamation{% else %}fa-bell{% endif %}"></i></span>
+        <div class="flex-grow-1"><div>{{ n.title }}</div><div class="small text-muted fw-normal">{{ n.message }}</div></div>
+        <div class="small text-muted text-nowrap fw-normal">{{ n.created_at|timesince }} ago</div>
+    </a>
+    {% empty %}<div class="empty"><i class="fa-solid fa-bell-slash"></i>No notifications yet.</div>{% endfor %}
+    {% include "portal/partials/pager.html" %}
+</div>
+{% endblock %}

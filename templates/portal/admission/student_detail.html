@@ -1,0 +1,50 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}{{ s.roll_no }}{% endblock %}
+{% block page_title %}{{ s.user.display_name }}{% endblock %}
+{% block crumb %}{{ s.roll_no }} · {{ s.course.name }} · {{ s.batch }} · Semester {{ s.semester }}{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico green"><i class="fa-solid fa-calendar-check"></i></div><div><div class="val">{{ attendance|default:"—" }}{% if attendance is not None %}%{% endif %}</div><div class="lbl">Attendance</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico blue"><i class="fa-solid fa-award"></i></div><div><div class="val">{{ cgpa|default:"—" }}</div><div class="lbl">CGPA</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico amber"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="val">{{ backlogs|length }}</div><div class="lbl">Backlogs</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico"><i class="fa-solid fa-indian-rupee-sign"></i></div><div><div class="val">₹{{ s.fee_due|floatformat:0|intcomma }}</div><div class="lbl">Fee Due</div></div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-5"><div class="card-p">
+        <div class="card-head"><h2>Profile</h2>{% if s.is_active %}<span class="st st-True">Active</span>{% endif %}</div>
+        <div class="small">
+            <p class="mb-1"><strong>Email:</strong> {{ s.user.email }}</p>
+            <p class="mb-1"><strong>Phone:</strong> {{ s.user.phone|default:"—" }}</p>
+            <p class="mb-1"><strong>DOB:</strong> {{ s.date_of_birth|date:"d M Y"|default:"—" }} · <strong>Gender:</strong> {{ s.gender|default:"—" }}</p>
+            <p class="mb-1"><strong>Category:</strong> {{ s.get_category_display }}</p>
+            <p class="mb-1"><strong>Admitted:</strong> {{ s.admission_date|date:"d M Y" }}</p>
+            <p class="mb-1"><strong>Address:</strong> {{ s.address|default:"—" }}</p>
+            <p class="mb-1"><strong>Parent:</strong> {{ s.parent.display_name|default:"Not linked" }}</p>
+        </div>
+        {% if can_edit and parents is not None %}
+        <form method="post" class="d-flex gap-2 mt-2">{% csrf_token %}
+            <select name="parent" class="form-select form-select-sm"><option value="">— No parent —</option>{% for p in parents %}<option value="{{ p.pk }}" {% if p.pk == s.parent_id %}selected{% endif %}>{{ p.display_name }} ({{ p.email }})</option>{% endfor %}</select>
+            <button class="btn-theme btn-sm-p">Link</button>
+        </form>
+        {% endif %}
+    </div></div>
+    <div class="col-lg-7"><div class="card-p">
+        <div class="card-head"><h2>Subject-wise Attendance (Sem {{ s.semester }})</h2></div>
+        {% for sub, pct in subject_att %}
+        <div class="mb-2"><div class="d-flex justify-content-between small"><span>{{ sub.code }} — {{ sub.name }}</span><strong>{{ pct|default:"—" }}{% if pct is not None %}%{% endif %}</strong></div>
+            <div class="bar {% if pct is not None and pct < attendance_threshold %}low{% endif %}"><span style="width:{{ pct|default:0 }}%"></span></div></div>
+        {% empty %}<div class="empty">No subjects configured.</div>{% endfor %}
+    </div></div>
+    <div class="col-lg-7"><div class="card-p">
+        <div class="card-head"><h2>Fee Invoices</h2></div>
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>Invoice</th><th>Sem</th><th>Net</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody>
+        {% for i in invoices %}<tr><td>{{ i.invoice_no }}</td><td>{{ i.semester }}</td><td>₹{{ i.net|intcomma }}</td><td>₹{{ i.paid|intcomma }}</td><td>₹{{ i.balance|intcomma }}</td><td><span class="st st-{{ i.status|slugify }}">{{ i.status }}</span></td></tr>{% empty %}<tr><td colspan="6" class="empty">No invoices.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+    <div class="col-lg-5"><div class="card-p">
+        <div class="card-head"><h2>Backlogs</h2></div>
+        {% for b in backlogs %}<div class="border-bottom py-2">{{ b.subject }} <span class="small text-muted">({{ b.exam.name }})</span></div>{% empty %}<div class="empty"><i class="fa-solid fa-circle-check"></i>No backlogs</div>{% endfor %}
+    </div></div>
+</div>
+{% endblock %}

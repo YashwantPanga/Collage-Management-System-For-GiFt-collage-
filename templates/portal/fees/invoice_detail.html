@@ -1,0 +1,48 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}{{ inv.invoice_no }}{% endblock %}
+{% block page_title %}Invoice {{ inv.invoice_no }}{% endblock %}
+{% block crumb %}{{ inv.student.user.display_name }} · {{ inv.student.roll_no }} · Semester {{ inv.semester }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card-p mb-3">
+            <div class="card-head"><h2>Summary</h2><span class="st st-{{ inv.status|slugify }}">{{ inv.status }}</span></div>
+            <table class="table-p"><tbody>
+                <tr><td>Tuition</td><td class="text-end">₹{{ inv.tuition_fee|intcomma }}</td></tr>
+                <tr><td>Examination</td><td class="text-end">₹{{ inv.exam_fee|intcomma }}</td></tr>
+                <tr><td>Other</td><td class="text-end">₹{{ inv.other_fee|intcomma }}</td></tr>
+                <tr><td>Concession {% if inv.scholarship %}({{ inv.scholarship }}){% endif %}</td><td class="text-end">−₹{{ inv.concession|intcomma }}</td></tr>
+                <tr><th>Net</th><th class="text-end">₹{{ inv.net|intcomma }}</th></tr>
+                <tr><td>Paid</td><td class="text-end">₹{{ inv.paid|intcomma }}</td></tr>
+                <tr><th>Balance</th><th class="text-end text-danger">₹{{ inv.balance|intcomma }}</th></tr>
+            </tbody></table>
+        </div>
+        <div class="card-p">
+            <div class="card-head"><h2>Payments</h2></div>
+            {% for p in inv.payments.all %}<div class="d-flex justify-content-between border-bottom py-2"><span>{{ p.receipt_no|default:p.gateway_order_id }} · {{ p.get_method_display }}</span><span>₹{{ p.amount|intcomma }} <span class="st st-{{ p.status }}">{{ p.get_status_display }}</span>{% if p.status == 'success' %} <a href="{% url 'cms:receipt' p.pk %}" class="small">receipt</a>{% endif %}</span></div>{% empty %}<div class="empty">No payments yet.</div>{% endfor %}
+        </div>
+    </div>
+    {% if can_edit %}
+    <div class="col-lg-6">
+        {% if inv.balance > 0 %}
+        <div class="card-p mb-3">
+            <div class="card-head"><h2>Collect Payment (Counter)</h2></div>
+            <form method="post" novalidate>{% csrf_token %}<input type="hidden" name="collect" value="1">
+                {% include "website/partials/form_fields.html" with form=pay_form %}
+                <button class="btn-theme btn-ok"><i class="fa-solid fa-receipt"></i> Record & Issue Receipt</button>
+            </form>
+        </div>
+        {% endif %}
+        <div class="card-p">
+            <div class="card-head"><h2>Edit / Apply Scholarship</h2></div>
+            <form method="post" novalidate>{% csrf_token %}<input type="hidden" name="edit" value="1">
+                {% include "website/partials/form_fields.html" with form=edit_form %}
+                <p class="small text-muted">Choosing a scholarship with concession 0 calculates the concession automatically.</p>
+                <button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

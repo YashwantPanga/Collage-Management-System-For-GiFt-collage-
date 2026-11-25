@@ -1,0 +1,21 @@
+{% load site_tags %}<div class="academic-card">
+    <div class="academic-img">
+        <a href="{{ p.get_absolute_url }}"><img src="{{ p.image|asset }}" alt="{{ p.name }}"></a>
+        <div class="academic-tag"><span><i class="fa-solid fa-tags"></i> {{ p.get_level_display }}</span></div>
+    </div>
+    <div class="academic-content">
+        <h3 class="box-title"><a href="{{ p.get_absolute_url }}">{{ p.name }}</a></h3>
+        <div class="academic-review">
+            <span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span><span><i class="fa-solid fa-star"></i></span>
+            <p class="review-text">(NAAC A++)</p>
+        </div>
+        <p class="box-text style2">{{ p.short_description|default:p.department.name }}</p>
+    </div>
+    <div class="academic-meta-wrap">
+        <div class="academic-meta">
+            <a href="{{ p.get_absolute_url }}" class="subject"><i class="fa-solid fa-users"></i> {{ p.seats }} Seats</a>
+            <a href="{{ p.get_absolute_url }}" class="duration"><i class="fa-solid fa-clock"></i> {{ p.duration_years|stringformat:"02d" }} Years</a>
+        </div>
+        <a href="{{ p.get_absolute_url }}" class="th-btn style-border1 th-icon">Discover</a>
+    </div>
+</div>

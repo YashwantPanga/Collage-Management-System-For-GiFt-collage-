@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+{% block title %}Attendance{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+{% block crumb %}{% if student %}{{ student.user.display_name }} · {{ student.roll_no }} · Semester {{ student.semester }}{% endif %}{% endblock %}
+{% block content %}
+{% include "portal/partials/ward_switch.html" %}
+{% if not student %}
+<div class="card-p"><div class="empty"><i class="fa-solid fa-user-graduate"></i>Attendance is available once you are enrolled as a student.</div></div>
+{% else %}
+<div class="row g-3">
+    <div class="col-lg-4"><div class="card-p text-center">
+        <div class="stat justify-content-center"><div class="ico {% if overall is not None and overall < attendance_threshold %}{% else %}green{% endif %}"><i class="fa-solid fa-calendar-check"></i></div><div class="text-start"><div class="val">{{ overall|default:"—" }}{% if overall is not None %}%{% endif %}</div><div class="lbl">Overall attendance</div></div></div>
+        {% if overall is not None and overall < attendance_threshold %}<div class="alert alert-warning mt-3 mb-0 small">Below the required {{ attendance_threshold|floatformat:0 }}%. Attend regularly to remain eligible for exams.</div>{% endif %}
+        {% if user.role == 'student' %}<p class="small text-muted mt-3 mb-0"><i class="fa-solid fa-qrcode"></i> Scan the QR shown by your faculty in class to mark attendance.</p>{% endif %}
+    </div></div>
+    <div class="col-lg-8"><div class="card-p"><div class="card-head"><h2>Subject-wise</h2></div><div class="chart-box sm"><canvas id="cMine"></canvas></div></div></div>
+    <div class="col-lg-6"><div class="card-p">
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>Subject</th><th>Attended</th><th>Total</th><th>%</th></tr></thead><tbody>
+        {% for r in rows %}<tr><td>{{ r.sub.code }} — {{ r.sub.name }}</td><td>{{ r.present }}</td><td>{{ r.total }}</td><td>{% if r.pct is not None %}<span class="st {% if r.pct < attendance_threshold %}st-danger{% else %}st-success{% endif %}">{{ r.pct }}%</span>{% else %}—{% endif %}</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>Recent Classes</h2></div>
+        <div class="table-wrap"><table class="table-p"><tbody>
+        {% for r in recent %}<tr><td>{{ r.session.date|date:"d M" }}</td><td>P{{ r.session.period }}</td><td>{{ r.session.subject.code }}</td><td><span class="st st-{{ r.status }}">{{ r.get_status_display }}</span></td></tr>{% empty %}<tr><td class="empty">No records yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+</div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}{% if student %}<script>const D = {{ chart|safe }}; drawChart("cMine", "bar", D.labels, [{label: "Attendance %", data: D.data}], {max: 100});</script>{% endif %}{% endblock %}

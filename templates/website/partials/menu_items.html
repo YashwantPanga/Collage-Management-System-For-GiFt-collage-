@@ -1,0 +1,54 @@
+<ul>
+    <li><a href="{% url 'website:home' %}">Home</a></li>
+    <li class="menu-item-has-children">
+        <a href="{% url 'website:about' %}">About</a>
+        <ul class="sub-menu">
+            <li><a href="{% url 'website:about' %}">About GIFT</a></li>
+            <li><a href="{% url 'website:departments' %}">Departments</a></li>
+            <li><a href="{% url 'website:faculty' %}">Faculty</a></li>
+            <li><a href="{% url 'website:campus' %}">Campus Life</a></li>
+        </ul>
+    </li>
+    <li class="menu-item-has-children">
+        <a href="{% url 'website:programs' %}">Programs</a>
+        <ul class="sub-menu">
+            <li><a href="{% url 'website:programs' %}">All Programs</a></li>
+            <li><a href="{% url 'website:programs' %}?level=UG">Undergraduate (B.Tech)</a></li>
+            <li><a href="{% url 'website:programs' %}?level=PG">Postgraduate (M.Tech / MBA / MCA)</a></li>
+            <li><a href="{% url 'website:programs' %}?level=DIP">Diploma</a></li>
+            <li><a href="{% url 'website:programs' %}?level=PHD">Ph.D</a></li>
+        </ul>
+    </li>
+    <li class="menu-item-has-children">
+        <a href="{% url 'website:admission' %}">Admission</a>
+        <ul class="sub-menu">
+            <li><a href="{% url 'website:admission' %}">Admission 2026</a></li>
+            <li><a href="{% url 'cms:apply' %}">Apply Online</a></li>
+            <li><a href="{% url 'cms:my_applications' %}">Track Application</a></li>
+            <li><a href="{% url 'website:faq' %}">Admission FAQs</a></li>
+        </ul>
+    </li>
+    <li><a href="{% url 'website:placements' %}">Placements</a></li>
+    <li class="menu-item-has-children">
+        <a href="{% url 'website:notices' %}">News & Events</a>
+        <ul class="sub-menu">
+            <li><a href="{% url 'website:notices' %}">Notices & News</a></li>
+            <li><a href="{% url 'website:events' %}">Events</a></li>
+        </ul>
+    </li>
+    <li><a href="{% url 'website:contact' %}">Contact</a></li>
+    <li class="menu-item-has-children">
+        <a href="{% url 'accounts:login' %}">Portal</a>
+        <ul class="sub-menu">
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'cms:dashboard' %}">My Dashboard</a></li>
+            <li><a href="{% url 'accounts:profile' %}">My Profile</a></li>
+            {% else %}
+            <li><a href="{% url 'accounts:login' %}">Login</a></li>
+            <li><a href="{% url 'accounts:register' %}">Register</a></li>
+            {% endif %}
+            <li><a href="{% url 'cms:my_fees' %}">Pay Fees Online</a></li>
+            <li><a href="{% url 'cms:my_results' %}">Results</a></li>
+        </ul>
+    </li>
+</ul>

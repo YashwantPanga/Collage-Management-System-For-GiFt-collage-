@@ -1,0 +1,26 @@
+{% extends "portal/base.html" %}
+{% block title %}My Faculty Profile{% endblock %}
+{% block page_title %}My Faculty Profile{% endblock %}
+{% block crumb %}{{ prof.employee_id }} · {{ prof.designation }} · {{ prof.department }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-7"><div class="card-p">
+        <div class="card-head"><h2>Profile</h2></div>
+        <form method="post" novalidate>{% csrf_token %}{% include "website/partials/form_fields.html" %}<button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save</button></form>
+    </div></div>
+    <div class="col-lg-5">
+        <div class="card-p mb-3">
+            <div class="card-head"><h2>Subjects</h2></div>
+            {% for s in subjects %}<div class="border-bottom py-2">{{ s.code }} — {{ s.name }} <span class="small text-muted">({{ s.course.code }} Sem {{ s.semester }})</span></div>{% empty %}<div class="empty">No subjects allocated.</div>{% endfor %}
+        </div>
+        <div class="card-p mb-3">
+            <div class="card-head"><h2>Attendance this month</h2></div>
+            <div class="d-flex flex-wrap gap-1">{% for a in attendance %}<span class="st st-{{ a.status }}" title="{{ a.date }}">{{ a.date|date:"d" }} {{ a.status }}</span>{% empty %}<span class="text-muted small">No records yet.</span>{% endfor %}</div>
+        </div>
+        <div class="card-p">
+            <div class="card-head"><h2>Performance Reviews</h2></div>
+            {% for r in reviews %}<div class="d-flex justify-content-between border-bottom py-2"><span>{{ r.period }}</span><strong>{{ r.overall }}/10</strong></div>{% empty %}<div class="empty">No reviews yet.</div>{% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

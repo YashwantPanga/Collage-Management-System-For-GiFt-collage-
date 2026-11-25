@@ -1,0 +1,18 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Pay Fees{% endblock %}
+{% block page_title %}Pay Fees Online{% endblock %}
+{% block content %}
+<div class="card-p" style="max-width:560px">
+    <div class="card-head"><h2>{{ inv.invoice_no }} — Semester {{ inv.semester }}</h2></div>
+    <p class="mb-1">Student: <strong>{{ inv.student.user.display_name }}</strong> ({{ inv.student.roll_no }})</p>
+    <p class="mb-1">Net payable: ₹{{ inv.net|intcomma }} · Paid: ₹{{ inv.paid|intcomma }}</p>
+    <p>Balance: <strong class="text-danger">₹{{ inv.balance|intcomma }}</strong></p>
+    <form method="post">{% csrf_token %}
+        <div class="form-group"><label for="amount">Amount to pay (₹)</label><input type="number" step="0.01" min="1" max="{{ inv.balance|stringformat:'s' }}" name="amount" id="amount" value="{{ amount|stringformat:'s' }}" class="form-control"></div>
+        <button class="btn-theme"><i class="fa-solid fa-lock"></i> Proceed to Secure Payment</button>
+        <a href="{% url 'cms:my_fees' %}" class="btn-ghost">Cancel</a>
+    </form>
+    <p class="small text-muted mt-3 mb-0"><i class="fa-solid fa-shield-halved"></i> Payments are processed through the payment gateway; card / UPI details are never stored by the college.</p>
+</div>
+{% endblock %}

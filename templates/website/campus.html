@@ -1,0 +1,32 @@
+{% extends "website/base.html" %}
+{% load static %}
+{% block title %}Campus Life — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Campus Life" banner="brand/hero-campus.jpg" %}{% endblock %}
+{% block content %}
+<section class="campus overflow-hidden space">
+    <div class="container">
+        <div class="title-area text-center">
+            <span class="sub-title">EXPERIENCE GIFT</span>
+            <h2 class="sec-title">Life at GIFT Autonomous</h2>
+            <p>Located at the outskirts of Bhubaneswar, our eco-friendly campus is well connected by rail, road and air — with modern study spaces, labs, hostels and vibrant student clubs.</p>
+        </div>
+        <div class="row gy-5 justify-content-center">
+            {% for item in gallery %}
+            <div class="col-xl-4 col-lg-6">
+                <div class="campus-card wow fadeInUp" data-wow-delay=".{{ forloop.counter }}s">
+                    <div class="campus-img global-img"><a href="{% static item.0 %}" class="d-block position-relative popup-image"><img src="{% static item.0 %}" alt="{{ item.1 }}" class="img-1"></a></div>
+                    <div class="campus-content"><h3 class="box-title">{{ item.1 }}</h3><p class="box-text">{{ item.2 }}</p></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<section class="apply-stadum-area bg-title position-relative space overflow-hidden">
+    <div class="container text-center">
+        <span class="sub-title text-white">VISIT US</span>
+        <h2 class="sec-title text-white">To visit our campus call {{ college.phone }}</h2>
+        <a href="{% url 'website:contact' %}" class="th-btn white-hover th-icon mt-3">Plan a Visit</a>
+    </div>
+</section>
+{% endblock %}

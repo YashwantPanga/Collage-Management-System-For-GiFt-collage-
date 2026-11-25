@@ -1,0 +1,44 @@
+{% extends "portal/base.html" %}
+{% block title %}{{ job.title }}{% endblock %}
+{% block page_title %}{{ job.title }}{% endblock %}
+{% block crumb %}{{ job.company.name }} · {{ job.package_lpa }} LPA · Apply by {{ job.deadline|date:"d M Y" }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-{% if lvl == 'register' %}8{% else %}4{% endif %}"><div class="card-p">
+        <div class="card-head"><h2>Job Description</h2>{% if can_manage %}<a href="{% url 'cms:job_edit' job.pk %}" class="btn-ghost btn-sm-p"><i class="fa-solid fa-pen"></i> Edit</a>{% endif %}</div>
+        <p>{{ job.description|linebreaksbr }}</p>
+        <table class="table-p"><tbody>
+            <tr><td>Location</td><td>{{ job.location|default:"—" }}</td></tr><tr><td>Vacancies</td><td>{{ job.vacancies }}</td></tr>
+            <tr><td>Min. CGPA</td><td>{{ job.min_cgpa }}</td></tr><tr><td>Max. backlogs</td><td>{{ job.max_backlogs }}</td></tr>
+            <tr><td>Min. attendance</td><td>{{ job.min_attendance }}%</td></tr>
+            <tr><td>Eligible programs</td><td>{% for c in job.eligible_courses.all %}{{ c.code }}{% if not forloop.last %}, {% endif %}{% empty %}All{% endfor %}</td></tr>
+        </tbody></table>
+        {% if drives %}<h3 class="h6 mt-3">Campus Drive</h3>{% for d in drives %}<div class="small border-bottom py-2"><strong>{{ d.date|date:"d M Y" }}</strong> at {{ d.venue }}<br>Rounds: {{ d.rounds }}{% if d.assessment_link %}<br><a href="{{ d.assessment_link }}" target="_blank" rel="noopener">Online assessment link</a>{% endif %}</div>{% endfor %}{% endif %}
+    </div></div>
+    {% if lvl == 'register' %}
+    <div class="col-lg-4"><div class="card-p">
+        <div class="card-head"><h2>Your Application</h2></div>
+        {% if app %}
+            <p>Status: <span class="st st-{{ app.stage }}">{{ app.get_stage_display }}</span></p>
+            {% if app.interview_at %}<p class="small">Interview: {{ app.interview_at|date:"d M Y H:i" }}</p>{% endif %}
+            {% if app.offer_letter %}<a href="{{ app.offer_letter.url }}" class="btn-theme btn-ok" target="_blank"><i class="fa-solid fa-file-pdf"></i> Offer Letter</a>{% endif %}
+        {% elif eligible %}
+            <p class="text-success"><i class="fa-solid fa-circle-check"></i> You meet the eligibility criteria.</p>
+            <form method="post">{% csrf_token %}<button name="apply" value="1" class="btn-theme w-100"><i class="fa-solid fa-paper-plane"></i> Apply Now</button></form>
+        {% else %}
+            <p class="text-danger mb-1"><i class="fa-solid fa-circle-xmark"></i> Not eligible:</p><ul class="small">{% for r in reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+        {% endif %}
+    </div></div>
+    {% else %}
+    <div class="col-lg-8"><div class="card-p">
+        <div class="card-head"><h2>Applicants — Shortlisting & Selection</h2>
+            <form method="get"><select name="stage" class="form-select form-select-sm" onchange="this.form.submit()"><option value="">All stages</option>{% for c, l in stages %}<option value="{{ c }}" {% if c == stage %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></form></div>
+        <div class="d-flex flex-wrap gap-2 mb-3">{% for c, l in stages %}<span class="st st-{{ c }}">{{ l }}: {% for k, v in funnel.items %}{% if k == c %}{{ v }}{% endif %}{% endfor %}</span>{% endfor %}</div>
+        <div class="table-wrap"><table class="table-p">
+            <thead><tr><th>Student</th><th>Program</th><th>CGPA</th><th>Resume</th><th>Stage</th><th>Interview</th><th></th></tr></thead>
+            <tbody>{% for a in apps %}<tr><td>{{ a.student.user.display_name }}<div class="small text-muted">{{ a.student.roll_no }}</div></td><td>{{ a.student.course.code }}</td><td>{{ a.student.cgpa|default:"—" }}</td><td>{% if a.student.placement_profile.resume %}<a href="{{ a.student.placement_profile.resume.url }}" target="_blank">CV</a>{% else %}—{% endif %}</td><td><span class="st st-{{ a.stage }}">{{ a.get_stage_display }}</span></td><td class="small">{{ a.interview_at|date:"d M H:i"|default:"—" }}</td><td class="actions">{% if can_manage %}<a href="{% url 'cms:application_stage' a.pk %}" class="btn-ghost btn-sm-p">Update</a>{% endif %}</td></tr>{% empty %}<tr><td colspan="7" class="empty">No applicants yet.</td></tr>{% endfor %}</tbody>
+        </table></div>
+    </div></div>
+    {% endif %}
+</div>
+{% endblock %}

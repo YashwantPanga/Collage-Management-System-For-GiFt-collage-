@@ -1,0 +1,28 @@
+{% extends "portal/base.html" %}
+{% block title %}Marks Entry{% endblock %}
+{% block page_title %}Subject-wise Marks Entry{% endblock %}
+{% block content %}
+<div class="card-p mb-3">
+    <form method="get" class="row g-2 align-items-end" novalidate>
+        {% for f in form.visible_fields %}<div class="col-md-5"><label for="{{ f.id_for_label }}">{{ f.label }}</label><select name="{{ f.html_name }}" id="{{ f.id_for_label }}" class="form-select">{% for v, l in f.field.choices %}<option value="{{ v }}" {% if f.value|stringformat:"s" == v|stringformat:"s" %}selected{% endif %}>{{ l }}</option>{% endfor %}</select></div>{% endfor %}
+        <div class="col-md-2"><button class="btn-theme w-100">Load</button></div>
+        {% if form.is_bound and form.non_field_errors %}<div class="col-12 text-danger small">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+    </form>
+</div>
+{% if exam %}
+<div class="card-p">
+    <div class="card-head"><h2>{{ exam.name }} · {{ subject.code }} {{ subject.name }}</h2><span class="small text-muted">Max {{ exam.max_marks }} · Pass {{ exam.pass_marks }}{% if exam.marks_locked %} · <span class="st st-danger">Locked</span>{% endif %}</span></div>
+    <form method="post">{% csrf_token %}
+        <div class="table-wrap"><table class="table-p">
+            <thead><tr><th>Roll No.</th><th>Student</th><th style="width:150px">Marks</th><th>Absent</th><th>Grade</th></tr></thead>
+            <tbody>{% for r in rows %}<tr><td>{{ r.s.roll_no }}</td><td>{{ r.s.user.display_name }}</td>
+                <td><input type="number" step="0.5" min="0" max="{{ exam.max_marks }}" name="m_{{ r.s.pk }}" class="form-control form-control-sm" value="{% if r.mk %}{{ r.mk.marks_obtained|stringformat:'s' }}{% endif %}" {% if exam.marks_locked %}disabled{% endif %}></td>
+                <td><input type="checkbox" class="form-check-input" name="ab_{{ r.s.pk }}" value="1" {% if r.mk.is_absent %}checked{% endif %} {% if exam.marks_locked %}disabled{% endif %}></td>
+                <td>{% if r.mk %}<span class="st {% if r.mk.grade == 'F' %}st-danger{% else %}st-success{% endif %}">{{ r.mk.grade }}</span>{% else %}—{% endif %}</td></tr>{% empty %}<tr><td colspan="5" class="empty">No students in this course/semester.</td></tr>{% endfor %}</tbody>
+        </table></div>
+        {% if not exam.marks_locked %}<button class="btn-theme mt-3"><i class="fa-solid fa-floppy-disk"></i> Submit Marks</button>{% endif %}
+        <p class="small text-muted mt-2 mb-0">Grades are calculated automatically (10-point scale: O, E, A, B, C, D, F). Every change is recorded in the audit log.</p>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

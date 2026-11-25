@@ -1,0 +1,29 @@
+{% extends "website/base.html" %}
+{% load static site_tags %}
+{% block title %}{{ notice.title }} — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% url 'website:notices' as nurl %}{% include "website/partials/breadcrumb.html" with title=notice.get_category_display parent="Notices & News" parent_url=nurl %}{% endblock %}
+{% block content %}
+<section class="th-blog-wrapper blog-details space-top space-extra2-bottom">
+    <div class="container th-container2">
+        <div class="row gx-60 gy-5">
+            <div class="col-xl-9 col-lg-7">
+                <div class="th-blog blog-single">
+                    {% if notice.image %}<div class="blog-img"><img src="{{ notice.image|asset }}" alt="{{ notice.title }}" style="width:100%;max-height:480px;object-fit:cover;"></div>{% endif %}
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <a href="#"><i class="fa-solid fa-user"></i>by {{ notice.author }}</a>
+                            <a href="#"><i class="fa-solid fa-clock"></i>{{ notice.published_on|date:"d M, Y" }}</a>
+                            <a href="{% url 'website:notices' %}?category={{ notice.category }}"><i class="fa-solid fa-book-open-cover"></i>{{ notice.get_category_display }}</a>
+                        </div>
+                        <h2 class="blog-title">{{ notice.title }}</h2>
+                        <p class="blog-text lead">{{ notice.summary }}</p>
+                        <div class="blog-text">{{ notice.body|linebreaks }}</div>
+                        {% if notice.attachment %}<a href="{{ notice.attachment.url }}" class="th-btn th-icon mt-3" target="_blank" rel="noopener">Download Attachment</a>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-5">{% include "website/partials/notice_sidebar.html" %}</div>
+        </div>
+    </div>
+</section>
+{% endblock %}

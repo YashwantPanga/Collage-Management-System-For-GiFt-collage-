@@ -1,0 +1,16 @@
+{% extends "portal/base.html" %}
+{% block title %}{{ res.title }}{% endblock %}
+{% block page_title %}{% if obj %}Edit{% else %}Add{% endif %} — {{ res.title }}{% endblock %}
+{% block crumb %}<a href="{% url 'cms:resource_list' res.slug %}">{{ res.title }}</a>{% if obj %} / {{ obj }}{% endif %}{% endblock %}
+{% block content %}
+<div class="card-p" style="max-width:900px">
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include "website/partials/form_fields.html" %}
+        <div class="d-flex gap-2 mt-2">
+            <button class="btn-theme" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            <a href="{% url 'cms:resource_list' res.slug %}" class="btn-ghost">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

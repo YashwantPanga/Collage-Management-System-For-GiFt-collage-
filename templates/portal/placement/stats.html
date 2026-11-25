@@ -1,0 +1,21 @@
+{% extends "portal/base.html" %}
+{% block title %}Placement Statistics{% endblock %}
+{% block page_title %}Placement Statistics{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-2"><div class="card-p"><div class="stat"><div><div class="val">{{ registered }}</div><div class="lbl">Registered</div></div></div></div></div>
+    <div class="col-6 col-xl-2"><div class="card-p"><div class="stat"><div><div class="val">{{ placed }}</div><div class="lbl">Placed</div></div></div></div></div>
+    <div class="col-6 col-xl-2"><div class="card-p"><div class="stat"><div><div class="val">{{ pct }}%</div><div class="lbl">Placement %</div></div></div></div></div>
+    <div class="col-6 col-xl-2"><div class="card-p"><div class="stat"><div><div class="val">{{ companies }}</div><div class="lbl">Companies</div></div></div></div></div>
+    <div class="col-6 col-xl-2"><div class="card-p"><div class="stat"><div><div class="val">{{ avg_pkg|floatformat:2|default:"—" }}</div><div class="lbl">Avg. LPA</div></div></div></div></div>
+    <div class="col-6 col-xl-2"><div class="card-p"><div class="stat"><div><div class="val">{{ max_pkg|default:"—" }}</div><div class="lbl">Highest LPA</div></div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Offers by Company</h2></div><div class="chart-box"><canvas id="cComp"></canvas></div></div></div>
+    <div class="col-lg-6"><div class="card-p"><div class="card-head"><h2>Placement % by Program</h2></div><div class="chart-box"><canvas id="cCourse"></canvas></div></div></div>
+    <div class="col-12"><div class="card-p"><div class="table-wrap"><table class="table-p"><thead><tr><th>Program</th><th>Registered</th><th>Placed</th><th>%</th></tr></thead><tbody>{% for r in by_course %}<tr><td>{{ r.c.name }}</td><td>{{ r.reg }}</td><td>{{ r.placed }}</td><td>{{ r.pct }}%</td></tr>{% empty %}<tr><td colspan="4" class="empty">No data.</td></tr>{% endfor %}</tbody></table></div></div></div>
+</div>
+{% endblock %}
+{% block extra_js %}<script>const D = {{ chart|safe }};
+drawChart("cComp", "bar", D.companies.labels, [{label: "Offers", data: D.companies.data}], {horizontal: true});
+drawChart("cCourse", "bar", D.courses.labels, [{label: "Placement %", data: D.courses.data, backgroundColor: "#1f9d55"}], {max: 100});</script>{% endblock %}

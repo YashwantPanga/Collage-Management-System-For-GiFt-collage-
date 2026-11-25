@@ -1,0 +1,110 @@
+{% load static site_tags %}<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Portal{% endblock %} — {{ college.short }} Portal</title>
+    <link rel="icon" type="image/png" href="{% static college.logo %}">
+    <meta name="theme-color" content="#D3224D">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Urbanist:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fontawesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/portal.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="portal">
+<div class="portal-shell">
+    <aside class="portal-sidebar" id="portalSidebar" aria-label="Portal navigation">
+        <div class="sidebar-brand">
+            <a href="{% url 'website:home' %}" title="Go to website"><img src="{% static college.logo %}" alt="{{ college.name }}"></a>
+            <button class="btn-icon d-lg-none" type="button" data-close-sidebar aria-label="Close menu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="sidebar-user">
+            <div class="avatar">{% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% else %}{{ user.display_name|slice:":1"|upper }}{% endif %}</div>
+            <div class="min-w-0">
+                <div class="name text-truncate">{{ user.display_name }}</div>
+                <div class="role">{{ user.get_role_display }}</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            {% for group, items in portal_menu %}
+            <div class="nav-group">
+                <div class="nav-group-title">{{ group }}</div>
+                {% for item in items %}
+                <a href="{{ item.href }}" class="nav-link-item {% if item.active %}active{% endif %}">
+                    <i class="fa-solid {{ item.icon }}"></i><span>{{ item.label }}</span>
+                    {% if item.label == "Notifications" and unread_count %}<span class="badge-pill">{{ unread_count }}</span>{% endif %}
+                </a>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            <div class="nav-group">
+                <div class="nav-group-title">Account</div>
+                <a href="{% url 'accounts:profile' %}" class="nav-link-item"><i class="fa-solid fa-user-gear"></i><span>My Account</span></a>
+                {% if user.is_superuser %}<a href="/django-admin/" class="nav-link-item"><i class="fa-solid fa-screwdriver-wrench"></i><span>Django Admin</span></a>
+                <a href="/api/" class="nav-link-item"><i class="fa-solid fa-code"></i><span>REST API</span></a>{% endif %}
+            </div>
+        </nav>
+    </aside>
+    <div class="sidebar-backdrop" data-close-sidebar></div>
+
+    <div class="portal-main">
+        <header class="portal-topbar">
+            <button class="btn-icon d-lg-none" type="button" id="openSidebar" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+            <div class="topbar-title">
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+                <div class="crumb">{% block crumb %}{{ college.full_name }}{% endblock %}</div>
+            </div>
+            <div class="topbar-actions">
+                <a href="{% url 'website:home' %}" class="btn-icon d-none d-md-inline-flex" title="Website"><i class="fa-solid fa-globe"></i></a>
+                <div class="dropdown">
+                    <button class="btn-icon position-relative" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications" id="notifBtn">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notif-dot {% if not unread_count %}d-none{% endif %}" id="notifCount">{{ unread_count }}</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end notif-menu shadow">
+                        <div class="px-3 py-2 fw-semibold border-bottom">Notifications</div>
+                        <div id="notifList"><div class="px-3 py-3 text-muted small">Loading…</div></div>
+                        <a class="dropdown-item text-center small fw-semibold" href="{% url 'cms:notifications' %}">View all</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn-user" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar sm">{{ user.display_name|slice:":1"|upper }}</span>
+                        <span class="d-none d-md-inline">{{ user.first_name|default:user.username }}</span>
+                        <i class="fa-solid fa-chevron-down small"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="fa-solid fa-user-gear me-2"></i>My Account</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="dropdown-item text-danger"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</button></form></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <main class="portal-content">
+            {% if messages %}
+            <div class="mb-3">
+                {% for message in messages %}{% if message.message %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}{% endfor %}
+            </div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="portal-footer">© {% now "Y" %} {{ college.full_name }} · College Management System</footer>
+    </div>
+</div>
+
+<script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'vendor/chart.umd.min.js' %}"></script>
+<script src="{% static 'js/portal.js' %}"></script>
+<script>window.PORTAL = {feed: "{% url 'cms:notification_feed' %}", open: "{% url 'cms:notifications' %}"};</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

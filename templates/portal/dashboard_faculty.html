@@ -1,0 +1,47 @@
+{% extends "portal/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Faculty Dashboard{% endblock %}
+{% block crumb %}{{ user.display_name }}{% if profile %} · {{ profile.designation }} · {{ profile.department }}{% endif %}{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico"><i class="fa-solid fa-book"></i></div><div><div class="val">{{ subjects|length }}</div><div class="lbl">Subjects Allocated</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico blue"><i class="fa-solid fa-chalkboard"></i></div><div><div class="val">{{ today_classes|length }}</div><div class="lbl">Classes Today</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico green"><i class="fa-solid fa-clock"></i></div><div><div class="val">{{ profile.weekly_hours|default:0 }}</div><div class="lbl">Weekly Periods</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico amber"><i class="fa-solid fa-pen-to-square"></i></div><div><div class="val">{{ open_exams|length }}</div><div class="lbl">Exams Open for Marks</div></div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>Today's Classes</h2><a href="{% url 'cms:timetable' %}" class="small">Full timetable</a></div>
+        {% for c in today_classes %}
+        <div class="d-flex justify-content-between align-items-center border-bottom py-2 gap-2">
+            <div><strong>{{ c.subject.name }}</strong><div class="small text-muted">{{ c.batch }} · Period {{ c.period }} · {{ c.room }}</div></div>
+            <form method="post" action="{% url 'cms:take_attendance' %}">{% csrf_token %}
+                <input type="hidden" name="subject" value="{{ c.subject_id }}"><input type="hidden" name="batch" value="{{ c.batch_id }}">
+                <input type="hidden" name="date" value="{{ today|date:'Y-m-d' }}"><input type="hidden" name="period" value="{{ c.period }}">
+                <button class="btn-theme btn-sm-p"><i class="fa-solid fa-clipboard-check"></i> Attendance</button>
+            </form>
+        </div>
+        {% empty %}<div class="empty"><i class="fa-solid fa-mug-hot"></i>No classes scheduled today</div>{% endfor %}
+    </div></div>
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>My Subjects</h2></div>
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>Code</th><th>Subject</th><th>Course</th><th>Sem</th></tr></thead><tbody>
+        {% for s in subjects %}<tr><td>{{ s.code }}</td><td>{{ s.name }}</td><td>{{ s.course.code }}</td><td>{{ s.semester }}</td></tr>{% empty %}<tr><td colspan="4" class="empty">No subjects allocated yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>Marks Entry</h2><a href="{% url 'cms:marks_entry' %}" class="small">Open</a></div>
+        {% for e in open_exams %}<div class="border-bottom py-2"><strong>{{ e.name }}</strong> <span class="small text-muted">{{ e.course.code }} Sem {{ e.semester }}</span></div>{% empty %}<div class="empty">No exams pending.</div>{% endfor %}
+    </div></div>
+    <div class="col-lg-6"><div class="card-p">
+        <div class="card-head"><h2>My Leave Requests</h2><a href="{% url 'cms:leaves' %}" class="btn-theme btn-sm-p"><i class="fa-solid fa-plus"></i> Apply</a></div>
+        {% for l in leaves %}<div class="d-flex justify-content-between border-bottom py-2"><span>{{ l.get_leave_type_display }} · {{ l.from_date|date:"d M" }}–{{ l.to_date|date:"d M" }}</span><span class="st st-{{ l.status }}">{{ l.get_status_display }}</span></div>{% empty %}<div class="empty">No leave requests.</div>{% endfor %}
+    </div></div>
+    <div class="col-12"><div class="card-p">
+        <div class="card-head"><h2>Recent Attendance Sessions</h2><a href="{% url 'cms:take_attendance' %}" class="small">Take attendance</a></div>
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>Date</th><th>Subject</th><th>Batch</th><th>Period</th><th></th></tr></thead><tbody>
+        {% for s in recent_sessions %}<tr><td>{{ s.date|date:"d M Y" }}</td><td>{{ s.subject.code }}</td><td>{{ s.batch }}</td><td>{{ s.period }}</td><td class="actions"><a href="{% url 'cms:attendance_session' s.pk %}" class="btn-ghost btn-sm-p">Open</a></td></tr>{% empty %}<tr><td colspan="5" class="empty">No sessions yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+</div>
+{% endblock %}

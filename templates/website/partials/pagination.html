@@ -1,0 +1,11 @@
+{% if page.has_other_pages %}
+<div class="th-pagination text-center mt-60">
+    <ul>
+        {% if page.has_previous %}<li><a href="?page={{ page.previous_page_number }}{% if category %}&category={{ category }}{% endif %}" aria-label="Previous"><i class="far fa-arrow-left"></i></a></li>{% endif %}
+        {% for n in page.paginator.page_range %}
+        <li><a href="?page={{ n }}{% if category %}&category={{ category }}{% endif %}" {% if n == page.number %}class="active"{% endif %}>{{ n }}</a></li>
+        {% endfor %}
+        {% if page.has_next %}<li><a href="?page={{ page.next_page_number }}{% if category %}&category={{ category }}{% endif %}" aria-label="Next"><i class="far fa-arrow-right"></i></a></li>{% endif %}
+    </ul>
+</div>
+{% endif %}

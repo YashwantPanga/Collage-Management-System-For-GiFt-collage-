@@ -1,0 +1,33 @@
+{% extends "website/base.html" %}
+{% load static site_tags %}
+{% block title %}{{ prof.user.display_name }} — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% url 'website:faculty' as furl %}{% include "website/partials/breadcrumb.html" with title=prof.user.display_name parent="Faculty" parent_url=furl %}{% endblock %}
+{% block content %}
+<section class="space">
+    <div class="container">
+        <div class="row gy-5 align-items-start">
+            <div class="col-lg-4">
+                <div class="text-center">
+                    {% if prof.photo %}<img src="{{ prof.photo|asset }}" alt="{{ prof.user.display_name }}" class="w-100" style="border-radius:20px;aspect-ratio:1/1;object-fit:cover;object-position:top;">{% else %}<div class="faculty-avatar"><span>{{ prof.user.first_name|slice:":1" }}{{ prof.user.last_name|slice:":1" }}</span></div>{% endif %}
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <span class="sub-title">{{ prof.department.name }}</span>
+                <h2 class="sec-title">{{ prof.user.display_name }}</h2>
+                <p class="h5 mb-4">{{ prof.designation }}</p>
+                <div class="row gy-3 mb-4">
+                    <div class="col-sm-6"><strong>Qualification:</strong> {{ prof.qualification|default:"—" }}</div>
+                    <div class="col-sm-6"><strong>Specialization:</strong> {{ prof.specialization|default:"—" }}</div>
+                    <div class="col-sm-6"><strong>Experience:</strong> {{ prof.experience_years }} years</div>
+                    <div class="col-sm-6"><strong>Email:</strong> {% if prof.user.email %}<a href="mailto:{{ prof.user.email }}">{{ prof.user.email }}</a>{% else %}—{% endif %}</div>
+                </div>
+                {% if prof.bio %}<p>{{ prof.bio|linebreaksbr }}</p>{% endif %}
+                {% if subjects %}
+                <h3 class="h4 mt-4">Subjects Taught</h3>
+                <ul class="list-unstyled">{% for s in subjects %}<li class="mb-2"><i class="fa-solid fa-book text-theme me-2"></i>{{ s.name }} <small class="text-muted">({{ s.course.code }}, Sem {{ s.semester }})</small></li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "website/base.html" %}
+{% load static %}
+{% block title %}Admission 2026 — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Admission 2026" banner="brand/promo4.webp" %}{% endblock %}
+{% block content %}
+<section class="space">
+    <div class="container">
+        <div class="title-area text-center"><span class="sub-title">HOW TO APPLY</span><h2 class="sec-title">100% online admission in 5 steps</h2></div>
+        <div class="row gy-4">
+            <div class="col-md-6 col-xl"><div class="feature-card h-100"><div class="box-icon"><i class="fa-solid fa-user-plus fa-2x text-theme"></i></div><h3 class="box-title">1. Register</h3><p class="box-text">Create your applicant account with email and mobile.</p></div></div>
+            <div class="col-md-6 col-xl"><div class="feature-card h-100"><div class="box-icon"><i class="fa-solid fa-file-signature fa-2x text-theme"></i></div><h3 class="box-title">2. Apply</h3><p class="box-text">Fill the online form and choose your program.</p></div></div>
+            <div class="col-md-6 col-xl"><div class="feature-card h-100"><div class="box-icon"><i class="fa-solid fa-cloud-arrow-up fa-2x text-theme"></i></div><h3 class="box-title">3. Upload</h3><p class="box-text">Upload marksheets, entrance scorecard and ID proof.</p></div></div>
+            <div class="col-md-6 col-xl"><div class="feature-card h-100"><div class="box-icon"><i class="fa-solid fa-list-check fa-2x text-theme"></i></div><h3 class="box-title">4. Track</h3><p class="box-text">Follow review, verification and approval live.</p></div></div>
+            <div class="col-md-6 col-xl"><div class="feature-card h-100"><div class="box-icon"><i class="fa-solid fa-id-card fa-2x text-theme"></i></div><h3 class="box-title">5. Enroll</h3><p class="box-text">Get your roll number and pay fees online.</p></div></div>
+        </div>
+        <div class="text-center mt-50">
+            <a href="{% url 'cms:apply' %}" class="th-btn th-icon">Start Application</a>
+            <a href="{% url 'cms:my_applications' %}" class="th-btn style-border1 th-icon">Track Application</a>
+        </div>
+    </div>
+</section>
+<section class="space-bottom">
+    <div class="container">
+        <div class="title-area text-center"><span class="sub-title">PROGRAMS OPEN FOR ADMISSION</span><h2 class="sec-title">Choose your program</h2></div>
+        <div class="table-responsive">
+            <table class="table table-plain align-middle">
+                <thead><tr><th>Program</th><th>Level</th><th>Duration</th><th>Seats</th><th>Eligibility</th><th></th></tr></thead>
+                <tbody>
+                {% for p in programs %}
+                <tr><td><a href="{{ p.get_absolute_url }}"><strong>{{ p.name }}</strong></a></td><td>{{ p.get_level_display }}</td><td>{{ p.duration_years }} yrs</td><td>{{ p.seats }}</td><td>{{ p.eligibility|default:"—" }}</td><td><a href="{% url 'cms:apply' %}?course={{ p.pk }}" class="th-btn style-border1 py-2 px-3">Apply</a></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% if faqs %}
+<section class="faq-area-1 position-relative space-bottom overflow-hidden">
+    <div class="container"><div class="title-area text-center"><span class="sub-title">FAQ</span><h2 class="sec-title">Admission Questions</h2></div>{% include "website/partials/faq_accordion.html" %}</div>
+</section>
+{% endif %}
+{% endblock %}

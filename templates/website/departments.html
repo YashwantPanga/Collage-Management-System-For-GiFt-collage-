@@ -1,0 +1,27 @@
+{% extends "website/base.html" %}
+{% load static site_tags %}
+{% block title %}Departments — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Departments" %}{% endblock %}
+{% block content %}
+<section class="faculty space overflow-hidden">
+    <div class="container th-container4">
+        <div class="row gy-5 justify-content-center">
+            {% for d in departments %}
+            <div class="col-xl-4 col-lg-6">
+                <div class="faculty-card wow fadeInUp" data-wow-delay=".{{ forloop.counter }}s">
+                    <div class="box-img global-img">
+                        <a href="{% url 'website:programs' %}" class="d-block position-relative"><img src="{{ d.image|asset:'brand/campus1.jpg' }}" alt="{{ d.name }}" class="img-1"></a>
+                    </div>
+                    <div class="box-content">
+                        <h3 class="box-title"><a href="{% url 'website:faculty' %}?q={{ d.name|urlencode }}">{{ d.name }}</a></h3>
+                        <p>{{ d.description|truncatechars:140 }}</p>
+                        <p class="mb-3"><i class="fa-solid fa-graduation-cap text-theme"></i> {{ d.n_courses }} programs &nbsp; <i class="fa-solid fa-chalkboard-user text-theme"></i> {{ d.n_faculty }} faculty</p>
+                        <a href="{% url 'website:faculty' %}?q={{ d.name|urlencode }}" class="th-btn style-border1 th-icon">Faculty</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

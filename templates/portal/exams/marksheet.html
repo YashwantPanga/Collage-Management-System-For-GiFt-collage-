@@ -1,0 +1,16 @@
+{% extends "portal/base.html" %}
+{% load static %}
+{% block title %}Marksheet{% endblock %}
+{% block page_title %}Grade Sheet{% endblock %}
+{% block content %}
+<div class="no-print mb-3"><button class="btn-theme" onclick="window.print()"><i class="fa-solid fa-download"></i> Download / Print</button></div>
+<div class="doc">
+    <div class="doc-head"><img src="{% static college.logo %}" alt=""><div><h2>{{ college.full_name }}</h2><small>An Autonomous Institution · NAAC A++ · {{ college.address_short }}</small></div></div>
+    <h3 class="h5 text-center mb-3">GRADE SHEET — {{ exam.name|upper }}</h3>
+    <table class="mb-3"><tr><th>Name</th><td>{{ s.user.display_name }}</td><th>Roll No.</th><td>{{ s.roll_no }}</td></tr><tr><th>Program</th><td>{{ s.course.name }}</td><th>Semester</th><td>{{ exam.semester }}</td></tr></table>
+    <table><thead><tr><th>Code</th><th>Subject</th><th>Credits</th><th>Marks</th><th>Grade</th><th>Grade Point</th></tr></thead>
+        <tbody>{% for mk in marks %}<tr><td>{{ mk.subject.code }}</td><td>{{ mk.subject.name }}</td><td>{{ mk.subject.credits }}</td><td>{% if mk.is_absent %}AB{% else %}{{ mk.marks_obtained }}{% endif %}</td><td>{{ mk.grade }}</td><td>{{ mk.grade_point }}</td></tr>{% endfor %}</tbody>
+        <tfoot><tr><th colspan="4" class="text-end">SGPA</th><th colspan="2">{{ sgpa|default:"—" }}</th></tr><tr><th colspan="4" class="text-end">CGPA</th><th colspan="2">{{ cgpa|default:"—" }}</th></tr></tfoot></table>
+    <p class="small text-muted mt-3 mb-0">Grading: O (≥90) 10, E (≥80) 9, A (≥70) 8, B (≥60) 7, C (≥50) 6, D (≥40) 5, F 0. Published on {{ exam.published_at|date:"d M Y" }}. Computer-generated document.</p>
+</div>
+{% endblock %}

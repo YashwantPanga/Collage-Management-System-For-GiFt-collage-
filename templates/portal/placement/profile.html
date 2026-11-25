@@ -1,0 +1,26 @@
+{% extends "portal/base.html" %}
+{% block title %}Placement Profile{% endblock %}
+{% block page_title %}Placement Registration & Resume{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-7"><div class="card-p">
+        <div class="card-head"><h2>My Placement Profile</h2>{% if profile.is_registered %}<span class="st st-success">Registered</span>{% else %}<span class="st st-pending">Not registered</span>{% endif %}</div>
+        <form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+            {% include "website/partials/form_fields.html" %}
+            {% if profile.resume %}<p class="small">Current resume: <a href="{{ profile.resume.url }}" target="_blank">download</a></p>{% endif %}
+            <button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save Profile</button>
+        </form>
+    </div></div>
+    <div class="col-lg-5"><div class="card-p">
+        <div class="card-head"><h2>Academic Eligibility</h2></div>
+        <p class="small text-muted">Checked automatically against each job's criteria.</p>
+        <table class="table-p"><tbody>
+            <tr><td>CGPA</td><td class="text-end"><strong>{{ cgpa|default:"—" }}</strong></td></tr>
+            <tr><td>Active backlogs</td><td class="text-end"><strong>{{ backlogs }}</strong></td></tr>
+            <tr><td>Attendance</td><td class="text-end"><strong>{{ attendance|default:"—" }}{% if attendance is not None %}%{% endif %}</strong></td></tr>
+            <tr><td>Program</td><td class="text-end">{{ student.course.code }}</td></tr>
+        </tbody></table>
+        <a href="{% url 'cms:jobs' %}" class="btn-theme mt-3"><i class="fa-solid fa-briefcase"></i> Browse Jobs</a>
+    </div></div>
+</div>
+{% endblock %}

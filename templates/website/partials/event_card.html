@@ -1,0 +1,18 @@
+{% load site_tags %}<div class="event-card wow fadeInUp" data-wow-delay=".{{ forloop.counter|add:1 }}s">
+    <div class="event-card-img global-img">
+        <img src="{{ e.image|asset }}" alt="{{ e.title }}">
+        <p class="event-card-tag"><span class="tag-number">{{ e.date|date:"d" }}</span>{{ e.date|date:"M" }}</p>
+    </div>
+    <div class="event-content">
+        <div class="event-wrapp">
+            <h3 class="box-title"><a href="{{ e.get_absolute_url }}">{{ e.title }}</a></h3>
+            <p class="box-text">{{ e.summary }}</p>
+            <div class="blog-meta">
+                <a class="location" href="{{ e.get_absolute_url }}"><i class="fa-solid fa-location-dot"></i> {{ e.venue }} </a>
+                <a class="date" href="{{ e.get_absolute_url }}"><i class="fa-regular fa-calendar-days"></i> {{ e.date|date:"d.m.Y" }} </a>
+                {% if e.start_time %}<a class="time" href="{{ e.get_absolute_url }}"><i class="fa-solid fa-clock"></i> {{ e.start_time|time:"h:ia" }}{% if e.end_time %} - {{ e.end_time|time:"h:ia" }}{% endif %} </a>{% endif %}
+            </div>
+        </div>
+        <div class="btn-wrap"><a class="th-btn style-border1 th-icon" href="{{ e.get_absolute_url }}">Details</a></div>
+    </div>
+</div>

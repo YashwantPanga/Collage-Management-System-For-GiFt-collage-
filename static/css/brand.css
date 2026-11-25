@@ -1,0 +1,49 @@
+/* GIFT Autonomous brand overrides on top of the template theme */
+.brand-logo { max-height: 64px; width: auto; }
+.header-logo .brand-logo { max-height: 70px; }
+.footer-brand { max-height: 80px; background: #fff; padding: 8px 14px; border-radius: 10px; }
+.mobile-logo .brand-logo, .about-logo .brand-logo { max-height: 60px; }
+.preloader-logo { max-width: 110px; }
+@media (max-width: 575px) { .header-logo .brand-logo { max-height: 48px; } }
+
+.link-btn-plain { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.link-btn-plain:hover { color: var(--theme-color); }
+
+.site-toasts { position: fixed; top: 16px; right: 16px; z-index: 99999; max-width: 420px; width: calc(100% - 32px); }
+.site-toasts .alert { margin-bottom: 10px; }
+
+.side-quick li a { display: inline-flex; align-items: center; }
+
+/* Hero background photos from GIFT */
+.hero-1 .th-hero-bg { background-size: cover; background-position: center; }
+.hero-1 .th-hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,25,51,.85) 0%, rgba(8,25,51,.45) 60%, rgba(8,25,51,.2) 100%); }
+
+/* Cover images in cards keep consistent ratios */
+.academic-img img, .event-card-img img, .blog-img-box img, .faculty-card .box-img img, .campus-img img { aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
+.faculty-card .box-img img.profile { aspect-ratio: 1 / 1; object-position: top; }
+.accreditation-strip { background: var(--smoke-color2); padding: 30px 0; }
+.accreditation-strip img { max-height: 90px; width: auto; filter: none; transition: transform .3s; }
+.accreditation-strip img:hover { transform: scale(1.05); }
+.partner-logo { display: flex; align-items: center; justify-content: center; height: 110px; background: #fff; border-radius: 12px; border: 1px solid var(--th-border-color2); padding: 14px; }
+.partner-logo img { max-height: 80px; max-width: 100%; object-fit: contain; }
+.recruiter-chip { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; margin: 6px; border-radius: 40px; background: #fff; border: 1px solid var(--th-border-color); font-weight: 600; color: var(--title-color); }
+
+/* Forms used on public pages */
+.site-form .form-control, .site-form .form-select { min-height: 52px; }
+.site-form label { font-weight: 600; color: var(--title-color); margin-bottom: 6px; }
+.site-form .errorlist { color: #c0392b; list-style: none; padding: 0; margin: 4px 0 0; font-size: 14px; }
+.site-form .helptext { font-size: 13px; color: var(--body-color); }
+.auth-card { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(8,25,51,.08); padding: 40px; }
+@media (max-width: 575px) { .auth-card { padding: 24px; } }
+.notice-date-badge { display:inline-block; background: var(--theme-color); color:#fff; border-radius: 8px; padding: 4px 10px; font-size: 13px; }
+.table-plain th { color: var(--title-color); }
+.chancellor-thumb img { border-radius: 20px; }
+
+/* GIFT logo inside the rotating badge */
+.discount-wrapp .logo img.circle-gift { width: 64px; height: 64px; object-fit: contain; background: #fff; border-radius: 50%; padding: 6px; }
+/* Faculty photo fallback: initials avatar */
+.faculty-avatar { aspect-ratio: 1 / 1; width: 100%; border-radius: 20px; display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--theme-color) 0%, #081933 100%); }
+.faculty-avatar span { color: #fff; font-family: var(--title-font); font-size: clamp(48px, 8vw, 90px); font-weight: 700; letter-spacing: 2px; }
+.recruiter-board { height: auto; padding: 10px; }
+.recruiter-board img { max-height: none; width: 100%; }

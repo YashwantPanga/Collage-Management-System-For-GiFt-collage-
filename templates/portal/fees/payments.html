@@ -1,0 +1,14 @@
+{% extends "portal/base.html" %}
+{% load humanize %}
+{% block title %}Payments{% endblock %}
+{% block page_title %}Payments & Transaction Log{% endblock %}
+{% block content %}
+<div class="card-p">
+    <div class="toolbar"><form method="get"><input class="form-control" name="q" value="{{ q }}" placeholder="Receipt, transaction id, roll no."><button class="btn-ghost">Search</button></form></div>
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr><th>Receipt</th><th>Student</th><th>Invoice</th><th>Amount</th><th>Method</th><th>Status</th><th>Transaction</th><th>Date</th><th></th></tr></thead>
+        <tbody>{% for p in page %}<tr><td>{{ p.receipt_no|default:"—" }}</td><td>{{ p.invoice.student.user.display_name }}<div class="small text-muted">{{ p.invoice.student.roll_no }}</div></td><td>{{ p.invoice.invoice_no }}</td><td>₹{{ p.amount|intcomma }}</td><td>{{ p.get_method_display }}</td><td><span class="st st-{{ p.status }}">{{ p.get_status_display }}</span></td><td class="small">{{ p.transaction_id }}</td><td>{{ p.paid_at|default:p.created_at|date:"d M Y H:i" }}</td><td class="actions">{% if p.status == 'success' %}<a href="{% url 'cms:receipt' p.pk %}" class="btn-ghost btn-sm-p">Receipt</a>{% endif %}</td></tr>{% empty %}<tr><td colspan="9" class="empty">No transactions.</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% include "portal/partials/pager.html" %}
+</div>
+{% endblock %}

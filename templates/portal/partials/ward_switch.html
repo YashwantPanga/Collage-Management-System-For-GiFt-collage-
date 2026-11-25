@@ -1,0 +1,8 @@
+{% if wards and wards|length > 1 %}
+<form method="get" class="d-flex gap-2 align-items-center mb-3">
+    <label for="wardSel" class="mb-0">Viewing:</label>
+    <select id="wardSel" name="ward" class="form-select" style="max-width:320px" onchange="this.form.submit()">
+        {% for w in wards %}<option value="{{ w.pk }}" {% if w.pk == student.pk %}selected{% endif %}>{{ w.user.display_name }} ({{ w.roll_no }})</option>{% endfor %}
+    </select>
+</form>
+{% endif %}

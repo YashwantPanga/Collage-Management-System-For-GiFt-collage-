@@ -1,0 +1,12 @@
+{% extends "portal/base.html" %}
+{% block title %}Update Candidate{% endblock %}
+{% block page_title %}{{ app.student.user.display_name }} — {{ app.job.title }}{% endblock %}
+{% block content %}
+<div class="card-p" style="max-width:760px">
+    <form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+        {% include "website/partials/form_fields.html" %}
+        <button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save & Notify Student</button>
+        <a href="{% url 'cms:job_detail' app.job_id %}" class="btn-ghost">Back</a>
+    </form>
+</div>
+{% endblock %}

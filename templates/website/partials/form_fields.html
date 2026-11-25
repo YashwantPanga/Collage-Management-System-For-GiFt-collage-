@@ -1,0 +1,17 @@
+{% load site_tags %}
+{% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+{% for field in form.hidden_fields %}{{ field|bs }}{% endfor %}
+<div class="row">
+    {% for field in form.visible_fields %}
+    <div class="form-group {% if field.field.widget.input_type == 'checkbox' %}col-12{% elif field.name in wide_fields or field.field.widget.attrs.rows %}col-12{% else %}col-md-6{% endif %}">
+        {% if field.field.widget.input_type == 'checkbox' %}
+            <div class="form-check">{{ field|bs }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+        {% else %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+            {{ field|bs }}
+        {% endif %}
+        {% if field.help_text %}<div class="helptext">{{ field.help_text|safe }}</div>{% endif %}
+        {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    {% endfor %}
+</div>

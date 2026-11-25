@@ -1,0 +1,19 @@
+{% extends "accounts/auth_base.html" %}
+{% load static %}
+{% block title %}Register — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Create Account" %}{% endblock %}
+{% block col %}col-lg-8{% endblock %}
+{% block card %}
+<div class="text-center mb-4">
+    <img src="{% static college.logo %}" alt="{{ college.name }}" style="max-height:70px">
+    <h2 class="h3 mt-3 mb-1">Create your account</h2>
+    <p class="mb-0">Staff accounts are created by the college administration.</p>
+</div>
+<form method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% include "website/partials/form_fields.html" with wide_fields="role" %}
+    <button type="submit" class="th-btn btn-fw w-100">Create Account</button>
+</form>
+<p class="text-center mt-4 mb-0">Already registered? <a href="{% url 'accounts:login' %}">Login</a></p>
+{% endblock %}

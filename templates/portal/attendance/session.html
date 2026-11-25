@@ -1,0 +1,43 @@
+{% extends "portal/base.html" %}
+{% block title %}Attendance Register{% endblock %}
+{% block page_title %}{{ session.subject.code }} — {{ session.subject.name }}{% endblock %}
+{% block crumb %}{{ session.batch }} · {{ session.date|date:"l, d M Y" }} · Period {{ session.period }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-xl-8"><div class="card-p">
+        <form method="post">{% csrf_token %}
+            <div class="toolbar">
+                <div class="d-flex gap-2"><button type="button" class="btn-ghost btn-sm-p" data-mark-all="P">All Present</button><button type="button" class="btn-ghost btn-sm-p" data-mark-all="A">All Absent</button></div>
+                <button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save Attendance</button>
+            </div>
+            <div class="table-wrap"><table class="table-p">
+                <thead><tr><th>Roll No.</th><th>Student</th><th>Status</th><th>Method</th><th>Subject %</th></tr></thead>
+                <tbody>{% for r in rows %}
+                <tr><td>{{ r.s.roll_no }}</td><td>{{ r.s.user.display_name }}</td>
+                    <td><div class="att-radio">
+                        <input type="radio" name="st_{{ r.s.pk }}" id="p{{ r.s.pk }}" value="P" {% if not r.r or r.r.status == 'P' %}checked{% endif %}><label for="p{{ r.s.pk }}" class="p">P</label>
+                        <input type="radio" name="st_{{ r.s.pk }}" id="a{{ r.s.pk }}" value="A" {% if r.r.status == 'A' %}checked{% endif %}><label for="a{{ r.s.pk }}" class="a">A</label>
+                        <input type="radio" name="st_{{ r.s.pk }}" id="l{{ r.s.pk }}" value="L" {% if r.r.status == 'L' %}checked{% endif %}><label for="l{{ r.s.pk }}" class="l">L</label>
+                    </div></td>
+                    <td>{% if r.r %}<span class="st {% if r.r.method == 'qr' %}st-info{% endif %}">{{ r.r.get_method_display }}</span>{% else %}<span class="small text-muted">not saved</span>{% endif %}</td>
+                    <td>{% if r.pct is not None %}<span class="{% if r.pct < attendance_threshold %}text-danger fw-bold{% endif %}">{{ r.pct }}%</span>{% else %}—{% endif %}</td></tr>
+                {% empty %}<tr><td colspan="5" class="empty">No students in this batch.</td></tr>{% endfor %}</tbody>
+            </table></div>
+        </form>
+    </div></div>
+    <div class="col-xl-4"><div class="card-p text-center">
+        <div class="card-head"><h2>QR Attendance</h2></div>
+        {% if qr_img %}
+            <img src="{{ qr_img }}" alt="Attendance QR code" class="img-fluid mb-2" style="max-width:280px">
+            <p class="small">Students scan this with their phone (logged in to the portal). Valid until <strong>{{ session.qr_expires_at|time:"H:i" }}</strong>.</p>
+            <form method="post">{% csrf_token %}<button name="close_qr" value="1" class="btn-ghost btn-danger-p">Close QR now</button></form>
+            <p class="small text-muted mt-2">Refresh this page to see students who scanned.</p>
+        {% else %}
+            <div class="empty"><i class="fa-solid fa-qrcode"></i>Show a time-limited QR code so students can mark themselves present.</div>
+            <form method="post">{% csrf_token %}<button name="open_qr" value="1" class="btn-theme"><i class="fa-solid fa-qrcode"></i> Show QR Code</button></form>
+        {% endif %}
+        <hr>
+        <p class="small text-muted mb-0"><i class="fa-solid fa-fingerprint"></i> Biometric devices can post records through the REST API (<code>method = bio</code>).</p>
+    </div></div>
+</div>
+{% endblock %}

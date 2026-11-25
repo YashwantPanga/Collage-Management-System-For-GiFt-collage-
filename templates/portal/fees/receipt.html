@@ -1,0 +1,28 @@
+{% extends "portal/base.html" %}
+{% load static humanize %}
+{% block title %}Receipt {{ p.receipt_no }}{% endblock %}
+{% block page_title %}Fee Receipt{% endblock %}
+{% block content %}
+<div class="no-print mb-3 d-flex gap-2"><button class="btn-theme" onclick="window.print()"><i class="fa-solid fa-download"></i> Download / Print</button><a href="{% url 'cms:my_fees' %}" class="btn-ghost">Back</a></div>
+<div class="doc">
+    <div class="doc-head"><img src="{% static college.logo %}" alt=""><div><h2>{{ college.full_name }}</h2><small>{{ college.address }} · {{ college.phone }}</small></div></div>
+    <div class="d-flex justify-content-between flex-wrap mb-3"><h3 class="h5 mb-0">FEE RECEIPT</h3><div><strong>Receipt No:</strong> {{ p.receipt_no }}<br><strong>Date:</strong> {{ p.paid_at|date:"d M Y, H:i" }}</div></div>
+    <table class="mb-3">
+        <tr><th>Student</th><td>{{ inv.student.user.display_name }}</td><th>Roll No.</th><td>{{ inv.student.roll_no }}</td></tr>
+        <tr><th>Program</th><td>{{ inv.student.course.name }}</td><th>Semester</th><td>{{ inv.semester }}</td></tr>
+        <tr><th>Invoice</th><td>{{ inv.invoice_no }}</td><th>Mode</th><td>{{ p.get_method_display }}</td></tr>
+        <tr><th>Transaction / Ref.</th><td colspan="3">{{ p.transaction_id|default:"—" }}</td></tr>
+    </table>
+    <table>
+        <tr><th>Particulars</th><th class="text-end">Amount (₹)</th></tr>
+        <tr><td>Tuition Fee</td><td class="text-end">{{ inv.tuition_fee|intcomma }}</td></tr>
+        <tr><td>Examination Fee</td><td class="text-end">{{ inv.exam_fee|intcomma }}</td></tr>
+        <tr><td>Other / Development Fee</td><td class="text-end">{{ inv.other_fee|intcomma }}</td></tr>
+        {% if inv.concession %}<tr><td>Less: Scholarship / Concession</td><td class="text-end">−{{ inv.concession|intcomma }}</td></tr>{% endif %}
+        <tr><th>Net Payable</th><th class="text-end">{{ inv.net|intcomma }}</th></tr>
+        <tr><th>Amount Received (this receipt)</th><th class="text-end">{{ p.amount|intcomma }}</th></tr>
+        <tr><td>Balance after all payments</td><td class="text-end">{{ inv.balance|intcomma }}</td></tr>
+    </table>
+    <p class="small text-muted mt-3 mb-0">This is a computer-generated receipt and does not require a signature.{% if p.collected_by %} Collected by {{ p.collected_by.display_name }}.{% endif %}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "website/base.html" %}
+{% load static site_tags %}
+{% block title %}Notices & News — {{ college.name }}{% endblock %}
+{% block breadcrumb %}{% include "website/partials/breadcrumb.html" with title="Notices & News" %}{% endblock %}
+{% block content %}
+<section class="th-blog-wrapper space-top space-extra2-bottom">
+    <div class="container th-container2">
+        <div class="row gx-60 gy-5">
+            <div class="col-xl-9 col-lg-7">
+                {% for n in page %}
+                <div class="th-blog blog-single has-post-thumbnail">
+                    {% if n.image %}<div class="blog-img"><a href="{{ n.get_absolute_url }}"><img src="{{ n.image|asset }}" alt="{{ n.title }}" style="max-height:420px;width:100%;object-fit:cover;"></a></div>{% endif %}
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <a href="{% url 'website:notices' %}"><i class="fa-solid fa-user"></i>by {{ n.author }}</a>
+                            <a href="{% url 'website:notices' %}"><i class="fa-solid fa-clock"></i>{{ n.published_on|date:"d M, Y" }}</a>
+                            <a href="?category={{ n.category }}"><i class="fa-solid fa-book-open-cover"></i>{{ n.get_category_display }}</a>
+                        </div>
+                        <h2 class="blog-title"><a href="{{ n.get_absolute_url }}">{{ n.title }}</a></h2>
+                        <p class="blog-text">{{ n.summary }}</p>
+                        <a href="{{ n.get_absolute_url }}" class="th-btn style-border1 th-icon"> Read More</a>
+                    </div>
+                </div>
+                {% empty %}<p>No notices yet.</p>{% endfor %}
+                {% include "website/partials/pagination.html" %}
+            </div>
+            <div class="col-xl-3 col-lg-5">
+                {% include "website/partials/notice_sidebar.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

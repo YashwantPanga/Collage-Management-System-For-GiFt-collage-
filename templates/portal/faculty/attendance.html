@@ -1,0 +1,24 @@
+{% extends "portal/base.html" %}
+{% block title %}Faculty Attendance{% endblock %}
+{% block page_title %}Faculty Attendance{% endblock %}
+{% block content %}
+<div class="card-p">
+    <div class="toolbar">
+        <form method="get"><input type="date" name="date" class="form-control" value="{{ day|date:'Y-m-d' }}"><button class="btn-ghost">Go</button></form>
+        <div class="d-flex gap-2"><button type="button" class="btn-ghost btn-sm-p" data-mark-all="P">All Present</button></div>
+    </div>
+    <form method="post">{% csrf_token %}<input type="hidden" name="date" value="{{ day|date:'Y-m-d' }}">
+        <div class="table-wrap"><table class="table-p">
+            <thead><tr><th>Faculty</th><th>Department</th><th>Status</th><th>In</th><th>Out</th></tr></thead>
+            <tbody>{% for r in rows %}
+            <tr><td>{{ r.p.user.display_name }}<div class="small text-muted">{{ r.p.employee_id }}</div></td><td>{{ r.p.department.code }}</td>
+                <td><div class="att-radio">{% for code, label in statuses %}<input type="radio" name="s_{{ r.p.pk }}" id="s{{ r.p.pk }}{{ code }}" value="{{ code }}" {% if r.a.status == code or not r.a and code == 'P' %}checked{% endif %}><label for="s{{ r.p.pk }}{{ code }}" class="{% if code == 'P' %}p{% elif code == 'A' %}a{% else %}l{% endif %}">{{ code }}</label>{% endfor %}</div></td>
+                <td><input type="time" name="in_{{ r.p.pk }}" class="form-control form-control-sm" value="{{ r.a.check_in|time:'H:i' }}"></td>
+                <td><input type="time" name="out_{{ r.p.pk }}" class="form-control form-control-sm" value="{{ r.a.check_out|time:'H:i' }}"></td></tr>
+            {% empty %}<tr><td colspan="5" class="empty">No faculty records.</td></tr>{% endfor %}</tbody>
+        </table></div>
+        <p class="small text-muted mt-2">P = Present, A = Absent, L = On Leave, H = Half Day. Approved leave is filled in automatically and feeds payroll.</p>
+        <button class="btn-theme"><i class="fa-solid fa-floppy-disk"></i> Save Attendance</button>
+    </form>
+</div>
+{% endblock %}

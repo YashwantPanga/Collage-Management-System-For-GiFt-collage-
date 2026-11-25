@@ -1,0 +1,21 @@
+{% extends "portal/base.html" %}
+{% block title %}Take Attendance{% endblock %}
+{% block page_title %}Take Attendance{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-5"><div class="card-p">
+        <div class="card-head"><h2>Start a class session</h2></div>
+        <form method="post" novalidate>{% csrf_token %}
+            {% include "website/partials/form_fields.html" %}
+            <button class="btn-theme"><i class="fa-solid fa-arrow-right"></i> Open Register</button>
+        </form>
+        <p class="small text-muted mt-3 mb-0">Mark students manually, or show a QR code that students scan from their phone to mark themselves present.</p>
+    </div></div>
+    <div class="col-lg-7"><div class="card-p">
+        <div class="card-head"><h2>Recent Sessions</h2></div>
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>Date</th><th>Subject</th><th>Batch</th><th>P</th><th>Present</th><th></th></tr></thead><tbody>
+        {% for s in sessions %}<tr><td>{{ s.date|date:"d M Y" }}</td><td>{{ s.subject.code }}</td><td>{{ s.batch }}</td><td>{{ s.period }}</td><td>{{ s.present }}/{{ s.total }}</td><td class="actions"><a href="{% url 'cms:attendance_session' s.pk %}" class="btn-ghost btn-sm-p">Open</a></td></tr>{% empty %}<tr><td colspan="6" class="empty">No sessions yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+</div>
+{% endblock %}

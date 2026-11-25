@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Recruiter Dashboard{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico"><i class="fa-solid fa-building"></i></div><div><div class="val">{{ companies|length }}</div><div class="lbl">My Companies</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico blue"><i class="fa-solid fa-briefcase"></i></div><div><div class="val">{{ jobs|length }}</div><div class="lbl">Job Postings</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico amber"><i class="fa-solid fa-users"></i></div><div><div class="val">{{ applicants }}</div><div class="lbl">Applicants</div></div></div></div></div>
+    <div class="col-6 col-xl-3"><div class="card-p"><div class="stat"><div class="ico green"><i class="fa-solid fa-user-check"></i></div><div><div class="val">{{ selected }}</div><div class="lbl">Selected</div></div></div></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-lg-5"><div class="card-p">
+        <div class="card-head"><h2>My Companies</h2><a href="{% url 'cms:resource_add' 'company' %}" class="btn-theme btn-sm-p"><i class="fa-solid fa-plus"></i> Add</a></div>
+        {% for c in companies %}<div class="d-flex justify-content-between border-bottom py-2"><span>{{ c.name }}</span>{% if c.is_approved %}<span class="st st-approved">Approved</span>{% else %}<span class="st st-pending">Awaiting approval</span>{% endif %}</div>{% empty %}<div class="empty"><i class="fa-solid fa-building"></i>Add your company to start posting jobs.</div>{% endfor %}
+    </div></div>
+    <div class="col-lg-7"><div class="card-p">
+        <div class="card-head"><h2>Job Postings</h2>{% if companies %}<a href="{% url 'cms:job_add' %}" class="btn-theme btn-sm-p"><i class="fa-solid fa-plus"></i> Post a Job</a>{% endif %}</div>
+        <div class="table-wrap"><table class="table-p"><thead><tr><th>Role</th><th>Package</th><th>Deadline</th><th>Applicants</th><th></th></tr></thead><tbody>
+        {% for j in jobs %}<tr><td>{{ j.title }}<div class="small text-muted">{{ j.company.name }}</div></td><td>{{ j.package_lpa }} LPA</td><td>{{ j.deadline|date:"d M Y" }}</td><td>{{ j.n }}</td><td class="actions"><a href="{% url 'cms:job_detail' j.pk %}" class="btn-ghost btn-sm-p">Manage</a></td></tr>{% empty %}<tr><td colspan="5" class="empty">No job postings yet.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div></div>
+</div>
+{% endblock %}

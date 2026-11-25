@@ -1,0 +1,17 @@
+{% extends "portal/base.html" %}
+{% block title %}Apply Online{% endblock %}
+{% block page_title %}Online Admission Application{% endblock %}
+{% block crumb %}Admission {% now "Y" %} · Fill in your details. You can upload documents on the next step.{% endblock %}
+{% block content %}
+<div class="card-p" style="max-width:1000px">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% include "website/partials/form_fields.html" %}
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="declare" required>
+            <label class="form-check-label" for="declare">I declare that the information given is true and correct.</label>
+        </div>
+        <button class="btn-theme" type="submit" onclick="if(!document.getElementById('declare').checked){alert('Please accept the declaration.');return false;}"><i class="fa-solid fa-paper-plane"></i> Submit Application</button>
+    </form>
+</div>
+{% endblock %}

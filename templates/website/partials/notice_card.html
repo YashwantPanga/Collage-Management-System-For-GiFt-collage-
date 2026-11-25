@@ -1,0 +1,22 @@
+{% load static site_tags %}<div class="blog-card wow fadeInUp">
+    <div class="blog-img position-relative">
+        <a href="{{ n.get_absolute_url }}">
+            <div class="blog-img-box position-relative overflow-hidden">
+                <img src="{{ n.image|asset }}" alt="{{ n.title }}">
+                <img src="{{ n.image|asset }}" alt="{{ n.title }}">
+            </div>
+        </a>
+        <div class="blog-date">
+            <h5 class="blog-date-title">{{ n.published_on|date:"d" }}</h5>
+            <p class="blog-date-text">{{ n.published_on|date:"M, Y"|upper }}</p>
+        </div>
+    </div>
+    <div class="blog-content">
+        <div class="blog-meta">
+            <a class="author" href="{% url 'website:notices' %}?category={{ n.category }}"><span class="author-icon"><img src="{% static college.logo %}" alt="GIFT" style="object-fit:contain;background:#fff;"></span>{{ n.get_category_display }}</a>
+        </div>
+        <h3 class="box-title"><a href="{{ n.get_absolute_url }}">{{ n.title }}</a></h3>
+        <p class="box-text">{{ n.summary|truncatechars:120 }}</p>
+        <div class="btn-wrap"><a href="{{ n.get_absolute_url }}" class="th-btn style-border1 th-icon">Read More</a></div>
+    </div>
+</div>

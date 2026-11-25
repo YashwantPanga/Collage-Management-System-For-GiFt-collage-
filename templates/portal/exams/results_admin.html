@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+{% block title %}Results{% endblock %}
+{% block page_title %}Results, Publication & Analytics{% endblock %}
+{% block content %}
+<div class="card-p mb-3">
+    <div class="card-head"><h2>Examinations</h2>{% if can_publish %}<a href="{% url 'cms:resource_add' 'exam' %}" class="btn-theme btn-sm-p"><i class="fa-solid fa-plus"></i> New Exam</a>{% endif %}</div>
+    <div class="table-wrap"><table class="table-p">
+        <thead><tr><th>Exam</th><th>Type</th><th>Program</th><th>Dates</th><th>Marks entered</th><th>Status</th><th class="actions">Actions</th></tr></thead>
+        <tbody>{% for e in exams %}<tr><td>{{ e.name }}</td><td>{{ e.get_exam_type_display }}</td><td>{{ e.course.code }} Sem {{ e.semester }}</td><td class="text-nowrap">{{ e.start_date|date:"d M" }}–{{ e.end_date|date:"d M Y" }}</td><td>{{ e.entries }}</td>
+            <td>{% if e.is_published %}<span class="st st-success">Published</span>{% elif e.marks_locked %}<span class="st st-warning">Locked</span>{% else %}<span class="st">Open</span>{% endif %}</td>
+            <td class="actions"><a href="?exam={{ e.pk }}" class="btn-ghost btn-sm-p"><i class="fa-solid fa-chart-column"></i></a>
+                {% if can_publish %}<form method="post" class="d-inline">{% csrf_token %}<input type="hidden" name="exam" value="{{ e.pk }}">
+                    {% if not e.is_published %}{% if e.marks_locked %}<button name="action" value="unlock" class="btn-ghost btn-sm-p" title="Unlock marks"><i class="fa-solid fa-lock-open"></i></button>{% else %}<button name="action" value="lock" class="btn-ghost btn-sm-p" title="Lock marks"><i class="fa-solid fa-lock"></i></button>{% endif %}
+                    <button name="action" value="publish" class="btn-theme btn-ok btn-sm-p" data-confirm="Publish results and notify students & parents?">Publish</button>
+                    {% else %}<button name="action" value="unpublish" class="btn-ghost btn-sm-p" data-confirm="Withdraw published results?">Withdraw</button>{% endif %}
+                </form>{% endif %}</td></tr>{% empty %}<tr><td colspan="7" class="empty">No exams.</td></tr>{% endfor %}</tbody>
+    </table></div>
+</div>
+{% if analytics %}
+<div class="row g-3">
+    <div class="col-lg-8"><div class="card-p"><div class="card-head"><h2>{{ analytics.exam.name }} — Subject Performance</h2></div><div class="chart-box"><canvas id="cSub"></canvas></div></div></div>
+    <div class="col-lg-4"><div class="card-p"><div class="card-head"><h2>Grade Distribution</h2></div><div class="chart-box"><canvas id="cGrades"></canvas></div></div></div>
+    <div class="col-12"><div class="card-p"><div class="table-wrap"><table class="table-p"><thead><tr><th>Subject</th><th>Students</th><th>Passed</th><th>Pass %</th><th>Average</th><th>Highest</th></tr></thead><tbody>
+        {% for r in analytics.subjects %}<tr><td>{{ r.subject__code }} — {{ r.subject__name }}</td><td>{{ r.n }}</td><td>{{ r.passed }}</td><td>{{ r.pct }}%</td><td>{{ r.avg|floatformat:1 }}</td><td>{{ r.top }}</td></tr>{% empty %}<tr><td colspan="6" class="empty">No marks entered.</td></tr>{% endfor %}
+    </tbody></table></div></div></div>
+</div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}{% if analytics %}<script>const A = {{ analytics.chart|safe }};
+drawChart("cSub", "bar", A.labels, [{label: "Pass %", data: A.pass, backgroundColor: "#1f9d55"}, {label: "Average marks", data: A.avg, backgroundColor: "#2563eb"}]);
+drawChart("cGrades", "doughnut", A.grades.labels, [{label: "Students", data: A.grades.data}]);</script>{% endif %}{% endblock %}
